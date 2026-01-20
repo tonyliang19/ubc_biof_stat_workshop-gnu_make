@@ -215,7 +215,7 @@ Let's build a complete analysis pipeline step by step!
 data/raw_data.csv:
 	mkdir -p data
 	wget -O data/raw_data.csv \
-	  https://example.com/dataset.csv
+	  https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv
 ```
 
 . . .
@@ -304,7 +304,7 @@ raw_data.csv → clean_data.csv → statistics.txt → plot1.png
 # Download data
 data/raw_data.csv:
 	mkdir -p data
-	wget -O data/raw_data.csv https://example.com/data.csv
+	wget -O data/raw_data.csv https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv
 
 # Clean data
 data/clean_data.csv: data/raw_data.csv scripts/clean.R
