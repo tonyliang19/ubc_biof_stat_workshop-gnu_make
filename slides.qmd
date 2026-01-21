@@ -4,14 +4,18 @@ subtitle: "Automating and Documenting Data Analysis Pipelines"
 author: "UBC BIOF Statistics Workshop"
 format:
   revealjs:
-    theme: dark
+    theme: simple
     slide-number: true
     transition: slide
     navigation-mode: linear
+    embed-resources: true
+    width: 1280
+    height: 720
     controls: true
     progress: true
     center: true
     code-line-numbers: false
+    output-file: index.html # If naming other files , gh complains
 ---
 
 ## Welcome! 👋
