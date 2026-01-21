@@ -1,0 +1,26 @@
+# Generated slide output
+slides.html
+slides_files/
+*_files/
+
+# Example pipeline outputs
+examples/data/iris.csv
+examples/data/iris_clean.csv
+examples/results/
+examples/figures/
+
+# R
+.Rhistory
+.RData
+.Rproj.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
