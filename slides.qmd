@@ -42,6 +42,83 @@ Learn how to use GNU Make to automate your research workflows
 
 ---
 
+## Installing GNU Make on Windows 🪟
+
+**Option 1: Using Chocolatey (Recommended)**
+
+1. **Install Chocolatey** (if not already installed):
+   - Right-click Start menu → "Windows PowerShell (Admin)"
+   - Visit: <https://chocolatey.org/install>
+   - Copy and run the installation command from the website
+
+2. **Install GNU Make:**
+   ```powershell
+   choco install make
+   ```
+
+3. **Verify installation:**
+   ```bash
+   make --version
+   # Should show: GNU Make 4.x
+   ```
+
+. . .
+
+**Option 2: Using Git for Windows (Built-in)**
+
+- Download and install **Git for Windows**: <https://gitforwindows.org/>
+- Make is included! Access via **Git Bash** terminal
+- Look for "Git Bash" in your Start menu
+
+. . .
+
+**Troubleshooting:**
+- If `make` command not found → Restart terminal/PowerShell
+- Use Git Bash instead of Command Prompt for Option 2
+
+---
+
+## Installing GNU Make on macOS 🍎
+
+**Option 1: Using Homebrew (Recommended)**
+
+1. **Install Homebrew** (if not already installed):
+   - Open **Terminal** (Applications → Utilities → Terminal)
+   - Visit: <https://brew.sh/>
+   - Copy and run the installation command:
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+
+2. **Install GNU Make:**
+   ```bash
+   brew install make
+   ```
+
+3. **Verify installation:**
+   ```bash
+   make --version
+   # Should show: GNU Make 4.x
+   ```
+
+. . .
+
+**Option 2: Xcode Command Line Tools (Built-in)**
+
+GNU Make comes with Xcode Command Line Tools:
+```bash
+xcode-select --install
+```
+Click "Install" in the popup window
+
+. . .
+
+**Troubleshooting:**
+- If `make --version` shows older version → Use `brew install make`
+- Homebrew installs as `gmake` on some systems → Create alias or use `gmake`
+
+---
+
 ## The Problem: Manual Workflows 😓
 
 **Typical research workflow:**
