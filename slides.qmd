@@ -42,6 +42,72 @@ Learn how to use GNU Make to automate your research workflows
 
 ---
 
+## Installing GNU Make on Windows 🪟
+
+**Option 1: Using Chocolatey (Recommended)**
+
+1. **Install Chocolatey** (if not already installed):
+   - Open PowerShell as Administrator
+   - Visit: <https://chocolatey.org/install>
+   - Run the installation command from the website
+
+2. **Install GNU Make:**
+   ```powershell
+   choco install make
+   ```
+
+. . .
+
+**Option 2: Using Git for Windows**
+
+- Download and install **Git for Windows**: <https://gitforwindows.org/>
+- Make is included in the Git Bash environment
+- Access via Git Bash terminal
+
+. . .
+
+**Verify installation:**
+```bash
+make --version
+```
+
+---
+
+## Installing GNU Make on macOS 🍎
+
+**Option 1: Using Homebrew (Recommended)**
+
+1. **Install Homebrew** (if not already installed):
+   - Open Terminal
+   - Visit: <https://brew.sh/>
+   - Run the installation command:
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+
+2. **Install GNU Make:**
+   ```bash
+   brew install make
+   ```
+
+. . .
+
+**Option 2: Xcode Command Line Tools**
+
+GNU Make is included with Xcode Command Line Tools:
+```bash
+xcode-select --install
+```
+
+. . .
+
+**Verify installation:**
+```bash
+make --version
+```
+
+---
+
 ## The Problem: Manual Workflows 😓
 
 **Typical research workflow:**
