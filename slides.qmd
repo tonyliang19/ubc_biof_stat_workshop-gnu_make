@@ -47,29 +47,34 @@ Learn how to use GNU Make to automate your research workflows
 **Option 1: Using Chocolatey (Recommended)**
 
 1. **Install Chocolatey** (if not already installed):
-   - Open PowerShell as Administrator
+   - Right-click Start menu → "Windows PowerShell (Admin)"
    - Visit: <https://chocolatey.org/install>
-   - Run the installation command from the website
+   - Copy and run the installation command from the website
 
 2. **Install GNU Make:**
    ```powershell
    choco install make
    ```
 
+3. **Verify installation:**
+   ```bash
+   make --version
+   # Should show: GNU Make 4.x
+   ```
+
 . . .
 
-**Option 2: Using Git for Windows**
+**Option 2: Using Git for Windows (Built-in)**
 
 - Download and install **Git for Windows**: <https://gitforwindows.org/>
-- Make is included in the Git Bash environment
-- Access via Git Bash terminal
+- Make is included! Access via **Git Bash** terminal
+- Look for "Git Bash" in your Start menu
 
 . . .
 
-**Verify installation:**
-```bash
-make --version
-```
+**Troubleshooting:**
+- If `make` command not found → Restart terminal/PowerShell
+- Use Git Bash instead of Command Prompt for Option 2
 
 ---
 
@@ -78,9 +83,9 @@ make --version
 **Option 1: Using Homebrew (Recommended)**
 
 1. **Install Homebrew** (if not already installed):
-   - Open Terminal
+   - Open **Terminal** (Applications → Utilities → Terminal)
    - Visit: <https://brew.sh/>
-   - Run the installation command:
+   - Copy and run the installation command:
    ```bash
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
@@ -90,21 +95,27 @@ make --version
    brew install make
    ```
 
+3. **Verify installation:**
+   ```bash
+   make --version
+   # Should show: GNU Make 4.x
+   ```
+
 . . .
 
-**Option 2: Xcode Command Line Tools**
+**Option 2: Xcode Command Line Tools (Built-in)**
 
-GNU Make is included with Xcode Command Line Tools:
+GNU Make comes with Xcode Command Line Tools:
 ```bash
 xcode-select --install
 ```
+Click "Install" in the popup window
 
 . . .
 
-**Verify installation:**
-```bash
-make --version
-```
+**Troubleshooting:**
+- If `make --version` shows older version → Use `brew install make`
+- Homebrew installs as `gmake` on some systems → Create alias or use `gmake`
 
 ---
 
