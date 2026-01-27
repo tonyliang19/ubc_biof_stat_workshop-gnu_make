@@ -1085,20 +1085,75 @@ UBC BIOF Statistics Workshop
 </ul>
 </div>
 </section>
+<section id="installing-gnu-make-on-windows" class="slide level2 center">
+<h2>Installing GNU Make on Windows 🪟</h2>
+<p><strong>Option 1: Using Chocolatey (Recommended)</strong></p>
+<ol type="1">
+<li><p><strong>Install Chocolatey</strong> (if not already installed):</p>
+<ul>
+<li>Right-click Start menu → “Windows PowerShell (Admin)”</li>
+<li>Visit: <a href="https://chocolatey.org/install" class="uri">https://chocolatey.org/install</a></li>
+<li>Copy and run the installation command from the website</li>
+</ul></li>
+<li><p><strong>Install GNU Make:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb1-1"><a href aria-hidden="true" tabindex="-1"></a>choco install make</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong>Verify installation:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">--version</span></span>
+<span id="cb2-2"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Should show: GNU Make 4.x</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+</ol>
+<div class="fragment">
+<p><strong>Option 2: Using Git for Windows (Built-in)</strong></p>
+<ul>
+<li>Download and install <strong>Git for Windows</strong>: <a href="https://gitforwindows.org/" class="uri">https://gitforwindows.org/</a></li>
+<li>Make is included! Access via <strong>Git Bash</strong> terminal</li>
+<li>Look for “Git Bash” in your Start menu</li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Troubleshooting:</strong> - If <code>make</code> command not found → Restart terminal/PowerShell - Use Git Bash instead of Command Prompt for Option 2</p>
+</div>
+</section>
+<section id="installing-gnu-make-on-macos" class="slide level2 center">
+<h2>Installing GNU Make on macOS 🍎</h2>
+<p><strong>Option 1: Using Homebrew (Recommended)</strong></p>
+<ol type="1">
+<li><p><strong>Install Homebrew</strong> (if not already installed):</p>
+<ul>
+<li>Open <strong>Terminal</strong> (Applications → Utilities → Terminal)</li>
+<li>Visit: <a href="https://brew.sh/" class="uri">https://brew.sh/</a></li>
+<li>Copy and run the installation command:</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/bash</span> <span class="at">-c</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">-fsSL</span> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh<span class="va">)</span><span class="st">&quot;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong>Install GNU Make:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install make</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong>Verify installation:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">--version</span></span>
+<span id="cb5-2"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Should show: GNU Make 4.x</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+</ol>
+<div class="fragment">
+<p><strong>Option 2: Xcode Command Line Tools (Built-in)</strong></p>
+<p>GNU Make comes with Xcode Command Line Tools:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">xcode-select</span> <span class="at">--install</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Click “Install” in the popup window</p>
+</div>
+<div class="fragment">
+<p><strong>Troubleshooting:</strong> - If <code>make --version</code> shows older version → Use <code>brew install make</code> - Homebrew installs as <code>gmake</code> on some systems → Create alias or use <code>gmake</code></p>
+</div>
+</section>
 <section id="the-problem-manual-workflows" class="slide level2 center">
 <h2>The Problem: Manual Workflows 😓</h2>
 <p><strong>Typical research workflow:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Download data</span></span>
-<span id="cb1-2"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> download_data.R</span>
-<span id="cb1-3"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Clean data</span></span>
-<span id="cb1-5"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> clean_data.R</span>
-<span id="cb1-6"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze</span></span>
-<span id="cb1-8"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> analyze.R</span>
-<span id="cb1-9"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Make figures</span></span>
-<span id="cb1-11"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> make_figures.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Download data</span></span>
+<span id="cb7-2"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> download_data.R</span>
+<span id="cb7-3"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Clean data</span></span>
+<span id="cb7-5"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> clean_data.R</span>
+<span id="cb7-6"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze</span></span>
+<span id="cb7-8"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> analyze.R</span>
+<span id="cb7-9"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Make figures</span></span>
+<span id="cb7-11"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> make_figures.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p><strong>Problems:</strong></p>
 <ul>
@@ -1142,12 +1197,12 @@ UBC BIOF Statistics Workshop
 <section id="make-vs-shell-scripts" class="slide level2 center">
 <h2>Make vs Shell Scripts</h2>
 <p><strong>Shell script approach:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb2-2"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># run_all.sh</span></span>
-<span id="cb2-3"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> download.R</span>
-<span id="cb2-4"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> clean.R</span>
-<span id="cb2-5"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> analyze.R</span>
-<span id="cb2-6"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> plot.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb8-2"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># run_all.sh</span></span>
+<span id="cb8-3"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> download.R</span>
+<span id="cb8-4"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> clean.R</span>
+<span id="cb8-5"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> analyze.R</span>
+<span id="cb8-6"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> plot.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Limitations:</strong></p>
 <ul>
 <li>Runs everything every time</li>
@@ -1159,11 +1214,11 @@ UBC BIOF Statistics Workshop
 <section id="make-vs-shell-scripts-1" class="slide level2 center">
 <h2>Make vs Shell Scripts</h2>
 <p><strong>Makefile approach:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb3-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">results.csv:</span><span class="dt"> raw_data.csv clean.R</span></span>
-<span id="cb3-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript clean.R</span>
-<span id="cb3-3"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">plots/figure1.png:</span><span class="dt"> results.csv plot.R</span></span>
-<span id="cb3-5"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript plot.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb9-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">results.csv:</span><span class="dt"> raw_data.csv clean.R</span></span>
+<span id="cb9-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript clean.R</span>
+<span id="cb9-3"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">plots/figure1.png:</span><span class="dt"> results.csv plot.R</span></span>
+<span id="cb9-5"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript plot.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Benefits:</strong></p>
 <ul>
 <li>Only re-runs when inputs change</li>
@@ -1174,12 +1229,12 @@ UBC BIOF Statistics Workshop
 </section>
 <section id="basic-makefile-syntax" class="slide level2 center">
 <h2>Basic Makefile Syntax</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb4-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">target:</span><span class="dt"> dependencies</span></span>
-<span id="cb4-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>command</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb10-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">target:</span><span class="dt"> dependencies</span></span>
+<span id="cb10-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>command</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p><strong>Example:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb5-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">clean_data.csv:</span><span class="dt"> raw_data.csv</span></span>
-<span id="cb5-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript clean_data.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb11-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">clean_data.csv:</span><span class="dt"> raw_data.csv</span></span>
+<span id="cb11-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript clean_data.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="fragment">
 <ul>
@@ -1221,25 +1276,25 @@ UBC BIOF Statistics Workshop
 <section id="step-1-download-data" class="slide level2 center">
 <h2>Step 1: Download Data</h2>
 <p><strong>Create <code>Makefile</code>:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb6-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">data/raw_data.csv:</span></span>
-<span id="cb6-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p data</span>
-<span id="cb6-3"><a href aria-hidden="true" tabindex="-1"></a>    wget -O data/raw_data.csv \</span>
-<span id="cb6-4"><a href aria-hidden="true" tabindex="-1"></a>      https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb12-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">data/raw_data.csv:</span></span>
+<span id="cb12-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p data</span>
+<span id="cb12-3"><a href aria-hidden="true" tabindex="-1"></a>    wget -O data/raw_data.csv \</span>
+<span id="cb12-4"><a href aria-hidden="true" tabindex="-1"></a>      https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p><strong>Run it:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> data/raw_data.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> data/raw_data.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="fragment">
 <p><strong>Run again:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> data/raw_data.csv</span>
-<span id="cb8-2"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># make: &#39;data/raw_data.csv&#39; is up to date.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> data/raw_data.csv</span>
+<span id="cb14-2"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># make: &#39;data/raw_data.csv&#39; is up to date.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="step-2-clean-data" class="slide level2 center">
 <h2>Step 2: Clean Data</h2>
 <p><strong>Add to <code>Makefile</code>:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb9-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">data/clean_data.csv:</span><span class="dt"> data/raw_data.csv scripts/clean.R</span></span>
-<span id="cb9-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript scripts/clean.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb15-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">data/clean_data.csv:</span><span class="dt"> data/raw_data.csv scripts/clean.R</span></span>
+<span id="cb15-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript scripts/clean.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p><strong>What this means:</strong></p>
 <ul>
@@ -1254,9 +1309,9 @@ UBC BIOF Statistics Workshop
 </section>
 <section id="step-3-statistical-analysis" class="slide level2 center">
 <h2>Step 3: Statistical Analysis</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb10-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">results/statistics.txt:</span><span class="dt"> data/clean_data.csv scripts/analyze.R</span></span>
-<span id="cb10-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p results</span>
-<span id="cb10-3"><a href aria-hidden="true" tabindex="-1"></a>    Rscript scripts/analyze.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb16-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">results/statistics.txt:</span><span class="dt"> data/clean_data.csv scripts/analyze.R</span></span>
+<span id="cb16-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p results</span>
+<span id="cb16-3"><a href aria-hidden="true" tabindex="-1"></a>    Rscript scripts/analyze.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p><strong>Chain of dependencies:</strong></p>
 <p><code>raw_data.csv</code> → <code>clean_data.csv</code> → <code>statistics.txt</code></p>
@@ -1267,9 +1322,9 @@ UBC BIOF Statistics Workshop
 </section>
 <section id="step-4-generate-figures" class="slide level2 center">
 <h2>Step 4: Generate Figures</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb11-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">figures/plot1.png:</span><span class="dt"> results/statistics.txt scripts/plot.R</span></span>
-<span id="cb11-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p figures</span>
-<span id="cb11-3"><a href aria-hidden="true" tabindex="-1"></a>    Rscript scripts/plot.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb17-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">figures/plot1.png:</span><span class="dt"> results/statistics.txt scripts/plot.R</span></span>
+<span id="cb17-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p figures</span>
+<span id="cb17-3"><a href aria-hidden="true" tabindex="-1"></a>    Rscript scripts/plot.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p>Now we have a full pipeline:</p>
 <pre><code>raw_data.csv → clean_data.csv → statistics.txt → plot1.png</code></pre>
@@ -1277,29 +1332,29 @@ UBC BIOF Statistics Workshop
 </section>
 <section id="complete-makefile-example" class="slide level2 center">
 <h2>Complete Makefile Example</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb13-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Download data</span></span>
-<span id="cb13-2"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">data/raw_data.csv:</span></span>
-<span id="cb13-3"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p data</span>
-<span id="cb13-4"><a href aria-hidden="true" tabindex="-1"></a>    wget -O data/raw_data.csv https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv</span>
-<span id="cb13-5"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Clean data</span></span>
-<span id="cb13-7"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">data/clean_data.csv:</span><span class="dt"> data/raw_data.csv scripts/clean.R</span></span>
-<span id="cb13-8"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript scripts/clean.R</span>
-<span id="cb13-9"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-10"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze</span></span>
-<span id="cb13-11"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">results/statistics.txt:</span><span class="dt"> data/clean_data.csv scripts/analyze.R</span></span>
-<span id="cb13-12"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p results</span>
-<span id="cb13-13"><a href aria-hidden="true" tabindex="-1"></a>    Rscript scripts/analyze.R</span>
-<span id="cb13-14"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-15"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
-<span id="cb13-16"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">figures/plot1.png:</span><span class="dt"> results/statistics.txt scripts/plot.R</span></span>
-<span id="cb13-17"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p figures</span>
-<span id="cb13-18"><a href aria-hidden="true" tabindex="-1"></a>    Rscript scripts/plot.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb19-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Download data</span></span>
+<span id="cb19-2"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">data/raw_data.csv:</span></span>
+<span id="cb19-3"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p data</span>
+<span id="cb19-4"><a href aria-hidden="true" tabindex="-1"></a>    wget -O data/raw_data.csv https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv</span>
+<span id="cb19-5"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Clean data</span></span>
+<span id="cb19-7"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">data/clean_data.csv:</span><span class="dt"> data/raw_data.csv scripts/clean.R</span></span>
+<span id="cb19-8"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript scripts/clean.R</span>
+<span id="cb19-9"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze</span></span>
+<span id="cb19-11"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">results/statistics.txt:</span><span class="dt"> data/clean_data.csv scripts/analyze.R</span></span>
+<span id="cb19-12"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p results</span>
+<span id="cb19-13"><a href aria-hidden="true" tabindex="-1"></a>    Rscript scripts/analyze.R</span>
+<span id="cb19-14"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb19-16"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">figures/plot1.png:</span><span class="dt"> results/statistics.txt scripts/plot.R</span></span>
+<span id="cb19-17"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p figures</span>
+<span id="cb19-18"><a href aria-hidden="true" tabindex="-1"></a>    Rscript scripts/plot.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="running-your-pipeline" class="slide level2 center">
 <h2>Running Your Pipeline</h2>
 <p><strong>Run the entire pipeline:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> figures/plot1.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> figures/plot1.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p>Make will:</p>
 <ol type="1">
@@ -1316,35 +1371,35 @@ UBC BIOF Statistics Workshop
 <section id="phony-targets" class="slide level2 center">
 <h2>Phony Targets</h2>
 <p>Some targets don’t create files:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb15-1"><a href aria-hidden="true" tabindex="-1"></a><span class="ot">.PHONY:</span><span class="dt"> clean all</span></span>
-<span id="cb15-2"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">all:</span><span class="dt"> figures/plot1.png</span></span>
-<span id="cb15-4"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">clean:</span></span>
-<span id="cb15-6"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>rm -f data/clean_data.csv</span>
-<span id="cb15-7"><a href aria-hidden="true" tabindex="-1"></a>    rm -f results/statistics.txt</span>
-<span id="cb15-8"><a href aria-hidden="true" tabindex="-1"></a>    rm -f figures/plot1.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb21-1"><a href aria-hidden="true" tabindex="-1"></a><span class="ot">.PHONY:</span><span class="dt"> clean all</span></span>
+<span id="cb21-2"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">all:</span><span class="dt"> figures/plot1.png</span></span>
+<span id="cb21-4"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">clean:</span></span>
+<span id="cb21-6"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>rm -f data/clean_data.csv</span>
+<span id="cb21-7"><a href aria-hidden="true" tabindex="-1"></a>    rm -f results/statistics.txt</span>
+<span id="cb21-8"><a href aria-hidden="true" tabindex="-1"></a>    rm -f figures/plot1.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p><strong>Usage:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> all    <span class="co"># Build everything</span></span>
-<span id="cb16-2"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> clean  <span class="co"># Remove generated files</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> all    <span class="co"># Build everything</span></span>
+<span id="cb22-2"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> clean  <span class="co"># Remove generated files</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="variables-for-cleaner-makefiles" class="slide level2 center">
 <h2>Variables for Cleaner Makefiles</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb17-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Define variables</span></span>
-<span id="cb17-2"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">R</span> <span class="ch">=</span><span class="st"> Rscript</span></span>
-<span id="cb17-3"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">DATA_DIR</span> <span class="ch">=</span><span class="st"> data</span></span>
-<span id="cb17-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">RESULTS_DIR</span> <span class="ch">=</span><span class="st"> results</span></span>
-<span id="cb17-5"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">FIGURES_DIR</span> <span class="ch">=</span><span class="st"> figures</span></span>
-<span id="cb17-6"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Use variables</span></span>
-<span id="cb17-8"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(DATA_DIR)/clean_data.csv:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">DATA_DIR</span><span class="ch">)</span><span class="dt">/raw_data.csv scripts/clean.R</span></span>
-<span id="cb17-9"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span><span class="ch">$(</span><span class="dt">R</span><span class="ch">)</span> scripts/clean.R</span>
-<span id="cb17-10"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-11"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(FIGURES_DIR)/plot1.png:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">RESULTS_DIR</span><span class="ch">)</span><span class="dt">/statistics.txt scripts/plot.R</span></span>
-<span id="cb17-12"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p <span class="ch">$(</span><span class="dt">FIGURES_DIR</span><span class="ch">)</span></span>
-<span id="cb17-13"><a href aria-hidden="true" tabindex="-1"></a>    <span class="ch">$(</span><span class="dt">R</span><span class="ch">)</span> scripts/plot.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb23-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Define variables</span></span>
+<span id="cb23-2"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">R</span> <span class="ch">=</span><span class="st"> Rscript</span></span>
+<span id="cb23-3"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">DATA_DIR</span> <span class="ch">=</span><span class="st"> data</span></span>
+<span id="cb23-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">RESULTS_DIR</span> <span class="ch">=</span><span class="st"> results</span></span>
+<span id="cb23-5"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">FIGURES_DIR</span> <span class="ch">=</span><span class="st"> figures</span></span>
+<span id="cb23-6"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Use variables</span></span>
+<span id="cb23-8"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(DATA_DIR)/clean_data.csv:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">DATA_DIR</span><span class="ch">)</span><span class="dt">/raw_data.csv scripts/clean.R</span></span>
+<span id="cb23-9"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span><span class="ch">$(</span><span class="dt">R</span><span class="ch">)</span> scripts/clean.R</span>
+<span id="cb23-10"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(FIGURES_DIR)/plot1.png:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">RESULTS_DIR</span><span class="ch">)</span><span class="dt">/statistics.txt scripts/plot.R</span></span>
+<span id="cb23-12"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p <span class="ch">$(</span><span class="dt">FIGURES_DIR</span><span class="ch">)</span></span>
+<span id="cb23-13"><a href aria-hidden="true" tabindex="-1"></a>    <span class="ch">$(</span><span class="dt">R</span><span class="ch">)</span> scripts/plot.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p><strong>Benefits:</strong> Easy to change paths or commands in one place!</p>
 </div>
@@ -1352,9 +1407,9 @@ UBC BIOF Statistics Workshop
 <section id="pattern-rules" class="slide level2 center">
 <h2>Pattern Rules</h2>
 <p>For repetitive tasks:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb18-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Convert all .csv files to .xlsx</span></span>
-<span id="cb18-2"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">%.xlsx:</span><span class="dt"> %.csv</span></span>
-<span id="cb18-3"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>python convert_to_excel.py <span class="ch">$&lt;</span> <span class="ch">$@</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb24-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Convert all .csv files to .xlsx</span></span>
+<span id="cb24-2"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">%.xlsx:</span><span class="dt"> %.csv</span></span>
+<span id="cb24-3"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>python convert_to_excel.py <span class="ch">$&lt;</span> <span class="ch">$@</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p><strong>Special variables:</strong></p>
 <ul>
@@ -1368,54 +1423,54 @@ UBC BIOF Statistics Workshop
 </section>
 <section id="real-world-example-complete-pipeline" class="slide level2 center">
 <h2>Real-World Example: Complete Pipeline</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb19-1"><a href aria-hidden="true" tabindex="-1"></a><span class="ot">.PHONY:</span><span class="dt"> all clean</span></span>
-<span id="cb19-2"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Variables</span></span>
-<span id="cb19-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">R</span> <span class="ch">=</span><span class="st"> Rscript</span></span>
-<span id="cb19-5"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">DATA</span> <span class="ch">=</span><span class="st"> data/iris.csv</span></span>
-<span id="cb19-6"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">CLEAN_DATA</span> <span class="ch">=</span><span class="st"> data/iris_clean.csv</span></span>
-<span id="cb19-7"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">RESULTS</span> <span class="ch">=</span><span class="st"> results/model_summary.txt</span></span>
-<span id="cb19-8"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">FIGURE</span> <span class="ch">=</span><span class="st"> figures/iris_plot.png</span></span>
-<span id="cb19-9"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-10"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Default target</span></span>
-<span id="cb19-11"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">all:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">FIGURE</span><span class="ch">)</span></span>
-<span id="cb19-12"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-13"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Pipeline</span></span>
-<span id="cb19-14"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(DATA):</span></span>
-<span id="cb19-15"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p data</span>
-<span id="cb19-16"><a href aria-hidden="true" tabindex="-1"></a>    wget -O <span class="ch">$(</span><span class="dt">DATA</span><span class="ch">)</span> \</span>
-<span id="cb19-17"><a href aria-hidden="true" tabindex="-1"></a>      https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv</span>
-<span id="cb19-18"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-19"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(CLEAN_DATA):</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">DATA</span><span class="ch">)</span><span class="dt"> scripts/clean.R</span></span>
-<span id="cb19-20"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span><span class="ch">$(</span><span class="dt">R</span><span class="ch">)</span> scripts/clean.R</span>
-<span id="cb19-21"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-22"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(RESULTS):</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">CLEAN_DATA</span><span class="ch">)</span><span class="dt"> scripts/analyze.R</span></span>
-<span id="cb19-23"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p results</span>
-<span id="cb19-24"><a href aria-hidden="true" tabindex="-1"></a>    <span class="ch">$(</span><span class="dt">R</span><span class="ch">)</span> scripts/analyze.R</span>
-<span id="cb19-25"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-26"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(FIGURE):</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">RESULTS</span><span class="ch">)</span><span class="dt"> scripts/plot.R</span></span>
-<span id="cb19-27"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p figures</span>
-<span id="cb19-28"><a href aria-hidden="true" tabindex="-1"></a>    <span class="ch">$(</span><span class="dt">R</span><span class="ch">)</span> scripts/plot.R</span>
-<span id="cb19-29"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-30"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Clean up</span></span>
-<span id="cb19-31"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">clean:</span></span>
-<span id="cb19-32"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>rm -rf data results figures</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb25-1"><a href aria-hidden="true" tabindex="-1"></a><span class="ot">.PHONY:</span><span class="dt"> all clean</span></span>
+<span id="cb25-2"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Variables</span></span>
+<span id="cb25-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">R</span> <span class="ch">=</span><span class="st"> Rscript</span></span>
+<span id="cb25-5"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">DATA</span> <span class="ch">=</span><span class="st"> data/iris.csv</span></span>
+<span id="cb25-6"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">CLEAN_DATA</span> <span class="ch">=</span><span class="st"> data/iris_clean.csv</span></span>
+<span id="cb25-7"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">RESULTS</span> <span class="ch">=</span><span class="st"> results/model_summary.txt</span></span>
+<span id="cb25-8"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">FIGURE</span> <span class="ch">=</span><span class="st"> figures/iris_plot.png</span></span>
+<span id="cb25-9"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-10"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Default target</span></span>
+<span id="cb25-11"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">all:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">FIGURE</span><span class="ch">)</span></span>
+<span id="cb25-12"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Pipeline</span></span>
+<span id="cb25-14"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(DATA):</span></span>
+<span id="cb25-15"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p data</span>
+<span id="cb25-16"><a href aria-hidden="true" tabindex="-1"></a>    wget -O <span class="ch">$(</span><span class="dt">DATA</span><span class="ch">)</span> \</span>
+<span id="cb25-17"><a href aria-hidden="true" tabindex="-1"></a>      https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv</span>
+<span id="cb25-18"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-19"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(CLEAN_DATA):</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">DATA</span><span class="ch">)</span><span class="dt"> scripts/clean.R</span></span>
+<span id="cb25-20"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span><span class="ch">$(</span><span class="dt">R</span><span class="ch">)</span> scripts/clean.R</span>
+<span id="cb25-21"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-22"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(RESULTS):</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">CLEAN_DATA</span><span class="ch">)</span><span class="dt"> scripts/analyze.R</span></span>
+<span id="cb25-23"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p results</span>
+<span id="cb25-24"><a href aria-hidden="true" tabindex="-1"></a>    <span class="ch">$(</span><span class="dt">R</span><span class="ch">)</span> scripts/analyze.R</span>
+<span id="cb25-25"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-26"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(FIGURE):</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">RESULTS</span><span class="ch">)</span><span class="dt"> scripts/plot.R</span></span>
+<span id="cb25-27"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>mkdir -p figures</span>
+<span id="cb25-28"><a href aria-hidden="true" tabindex="-1"></a>    <span class="ch">$(</span><span class="dt">R</span><span class="ch">)</span> scripts/plot.R</span>
+<span id="cb25-29"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-30"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Clean up</span></span>
+<span id="cb25-31"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">clean:</span></span>
+<span id="cb25-32"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>rm -rf data results figures</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="parallel-execution" class="slide level2 center">
 <h2>Parallel Execution</h2>
 <p>Make can run independent tasks simultaneously:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb20-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">all:</span><span class="dt"> figure1.png figure2.png figure3.png</span></span>
-<span id="cb20-2"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">figure1.png:</span><span class="dt"> data.csv script1.R</span></span>
-<span id="cb20-4"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript script1.R</span>
-<span id="cb20-5"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-6"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">figure2.png:</span><span class="dt"> data.csv script2.R</span></span>
-<span id="cb20-7"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript script2.R</span>
-<span id="cb20-8"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-9"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">figure3.png:</span><span class="dt"> data.csv script3.R</span></span>
-<span id="cb20-10"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript script3.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb26-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">all:</span><span class="dt"> figure1.png figure2.png figure3.png</span></span>
+<span id="cb26-2"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">figure1.png:</span><span class="dt"> data.csv script1.R</span></span>
+<span id="cb26-4"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript script1.R</span>
+<span id="cb26-5"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">figure2.png:</span><span class="dt"> data.csv script2.R</span></span>
+<span id="cb26-7"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript script2.R</span>
+<span id="cb26-8"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-9"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">figure3.png:</span><span class="dt"> data.csv script3.R</span></span>
+<span id="cb26-10"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript script3.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Run in parallel:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-j</span> 3 all  <span class="co"># Run 3 jobs simultaneously</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-j</span> 3 all  <span class="co"># Run 3 jobs simultaneously</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="when-to-use-make-vs-r-scripts" class="slide level2 center">
 <h2>When to Use Make vs R Scripts</h2>
@@ -1449,46 +1504,46 @@ UBC BIOF Statistics Workshop
 <section id="common-pitfalls" class="slide level2 center">
 <h2>Common Pitfalls</h2>
 <p>❌ <strong>Using spaces instead of tabs</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb22-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">target:</span><span class="dt"> dependency</span></span>
-<span id="cb22-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>command  <span class="co"># WRONG! This is spaces</span></span>
-<span id="cb22-3"><a href aria-hidden="true" tabindex="-1"></a>    command  <span class="co"># RIGHT! This is a tab</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb28-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">target:</span><span class="dt"> dependency</span></span>
+<span id="cb28-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>command  <span class="co"># WRONG! This is spaces</span></span>
+<span id="cb28-3"><a href aria-hidden="true" tabindex="-1"></a>    command  <span class="co"># RIGHT! This is a tab</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p>❌ <strong>Circular dependencies</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb23-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">a.txt:</span><span class="dt"> b.txt</span></span>
-<span id="cb23-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>cat b.txt &gt; a.txt</span>
-<span id="cb23-3"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">b.txt:</span><span class="dt"> a.txt  </span><span class="co"># CIRCULAR!</span></span>
-<span id="cb23-5"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>cat a.txt &gt; b.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb29-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">a.txt:</span><span class="dt"> b.txt</span></span>
+<span id="cb29-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>cat b.txt &gt; a.txt</span>
+<span id="cb29-3"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">b.txt:</span><span class="dt"> a.txt  </span><span class="co"># CIRCULAR!</span></span>
+<span id="cb29-5"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>cat a.txt &gt; b.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="debugging-tips" class="slide level2 center">
 <h2>Debugging Tips</h2>
 <p><strong>Check what Make would do:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-n</span> target  <span class="co"># Dry run, shows commands without executing</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-n</span> target  <span class="co"># Dry run, shows commands without executing</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p><strong>See why Make rebuilds:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-d</span> target  <span class="co"># Debug mode, verbose output</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-d</span> target  <span class="co"># Debug mode, verbose output</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="fragment">
 <p><strong>Force rebuild:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-B</span> target  <span class="co"># Rebuild regardless of timestamps</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-B</span> target  <span class="co"># Rebuild regardless of timestamps</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="example-why-make-shell-script" class="slide level2 center">
 <h2>Example: Why Make &gt; Shell Script</h2>
 <p><strong>Shell script approach:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb27-2"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> download.R     <span class="co"># Always runs (even if data unchanged)</span></span>
-<span id="cb27-3"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> clean.R        <span class="co"># Always runs</span></span>
-<span id="cb27-4"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> analyze.R      <span class="co"># Always runs</span></span>
-<span id="cb27-5"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> plot.R         <span class="co"># Always runs</span></span>
-<span id="cb27-6"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Takes 30 minutes every time!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb33-2"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> download.R     <span class="co"># Always runs (even if data unchanged)</span></span>
+<span id="cb33-3"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> clean.R        <span class="co"># Always runs</span></span>
+<span id="cb33-4"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> analyze.R      <span class="co"># Always runs</span></span>
+<span id="cb33-5"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> plot.R         <span class="co"># Always runs</span></span>
+<span id="cb33-6"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Takes 30 minutes every time!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
 <p><strong>Makefile approach:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> all</span>
-<span id="cb28-2"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># First run: 30 minutes</span></span>
-<span id="cb28-3"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Edit plot.R and re-run: 10 seconds (only reruns plotting!)</span></span>
-<span id="cb28-4"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># No changes: instant (nothing to do!)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> all</span>
+<span id="cb34-2"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># First run: 30 minutes</span></span>
+<span id="cb34-3"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Edit plot.R and re-run: 10 seconds (only reruns plotting!)</span></span>
+<span id="cb34-4"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># No changes: instant (nothing to do!)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="hands-on-exercise-optional" class="slide level2 center">
@@ -1502,11 +1557,11 @@ UBC BIOF Statistics Workshop
 <li>Touch a file and run <code>make</code> again</li>
 </ol>
 <p><strong>Example starter:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb29-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">hello.txt:</span></span>
-<span id="cb29-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>echo <span class="st">&quot;Hello, Make!&quot;</span> &gt; hello.txt</span>
-<span id="cb29-3"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">goodbye.txt:</span><span class="dt"> hello.txt</span></span>
-<span id="cb29-5"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>cat hello.txt | sed <span class="st">&#39;s/Hello/Goodbye/&#39;</span> &gt; goodbye.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb35-1"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">hello.txt:</span></span>
+<span id="cb35-2"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>echo <span class="st">&quot;Hello, Make!&quot;</span> &gt; hello.txt</span>
+<span id="cb35-3"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">goodbye.txt:</span><span class="dt"> hello.txt</span></span>
+<span id="cb35-5"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>cat hello.txt | sed <span class="st">&#39;s/Hello/Goodbye/&#39;</span> &gt; goodbye.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="advanced-topics-for-later" class="slide level2 center">
 <h2>Advanced Topics (For Later)</h2>
