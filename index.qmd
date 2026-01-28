@@ -22,23 +22,23 @@ format:
 
 **Today's Goal:**
 
-Learn how to use GNU Make to automate your research workflows
+Learn how to automate data analysis pipelines with GNU Make
 
 . . .
 
 **Who is this for?**
 
-- Graduate students doing data analysis
-- Researchers who want reproducible pipelines
+- Researchers doing multi-step data analysis
 - Anyone tired of manually running scripts in order
+- People who want reproducible research workflows
 
 . . .
 
 **What you'll learn:**
 
-- Why Make > Shell scripts for pipelines
-- Basic Make syntax
-- Real data analysis example
+- Why automation matters for research
+- How Make tracks dependencies automatically
+- Building a real data analysis pipeline
 
 ---
 
@@ -119,117 +119,161 @@ Click "Install" in the popup window
 
 ---
 
-## The Problem: Manual Workflows 😓
+## A Typical Research Pipeline
 
-**Typical research workflow:**
+You have a multi-step data analysis:
 
 ```bash
-# Download data
+# Step 1: Download data
 Rscript download_data.R
 
-# Clean data
+# Step 2: Clean the data
 Rscript clean_data.R
 
-# Analyze
+# Step 3: Run analysis
 Rscript analyze.R
 
-# Make figures
+# Step 4: Make figures
 Rscript make_figures.R
 ```
 
 . . .
 
-**Problems:**
-
-- Which scripts did I run?
-- Did I re-run everything after updating data?
-- What if one step fails halfway through?
+**You run all four scripts. Analysis complete!** ✅
 
 ---
 
-## The Problem Continued
+## Then You Update Your Analysis Script...
 
-**What happens when you update the data?**
-
-. . .
-
-❌ Re-run everything (slow!)
+You realize you need to fix a bug in `analyze.R`
 
 . . .
 
-❌ Manually track what needs updating (error-prone!)
+**Question: Which scripts need to be re-run?**
 
 . . .
 
-❌ Forget to update downstream files (wrong results!)
+A. Just `analyze.R`
+B. `analyze.R` and `make_figures.R`
+C. All four scripts
+D. Not sure... better run them all!
+
+---
+
+## The Problem: Dependency Tracking
+
+**After fixing `analyze.R`, you must:**
+
+1. Re-run `analyze.R` (it changed)
+2. Re-run `make_figures.R` (depends on `analyze.R` output)
+3. Skip `download_data.R` and `clean_data.R` (inputs unchanged)
 
 . . .
 
-✅ **Solution: GNU Make automatically tracks dependencies!**
+**But how do you remember this?**
+
+❌ Keep dependencies in your head (error-prone!)
+❌ Re-run everything every time (slow!)
+❌ Write them down somewhere (tedious!)
+
+---
+
+## The Problem Gets Worse
+
+**Real research pipelines have:**
+
+- 10+ scripts running in sequence
+- Complex dependencies (script C needs outputs from A and B)
+- Long-running steps (some take hours!)
+- Multiple researchers working on different parts
+
+. . .
+
+**What happens when you update the raw data?**
+
+You need to re-run EVERYTHING downstream... but which scripts are those?
+
+. . .
+
+✅ **Solution: GNU Make automatically tracks all dependencies!**
 
 ---
 
 ## What is GNU Make? 🔧
 
-A build automation tool that:
+**A build automation tool that:**
 
 . . .
 
-1. **Tracks dependencies** between files
-2. **Runs only what's needed** when files change
-3. **Documents your workflow** in one place
+1. **Knows about dependencies** between your files
+2. **Runs only what's outdated** when files change
+3. **Documents your entire workflow** in one Makefile
 4. **Ensures reproducibility**
 
 . . .
 
-Originally designed for compiling software, but perfect for data analysis!
+Originally created for compiling software, but perfect for data pipelines!
+
+. . .
+
+**Think of Make as:**
+A smart assistant that remembers which scripts depend on which files
 
 ---
 
-## Make vs Shell Scripts
+## Why Make for Data Analysis?
 
-**Shell script approach:**
+**Shell script limitations:**
 
 ```bash
 #!/bin/bash
-# run_all.sh
-Rscript download.R
-Rscript clean.R
-Rscript analyze.R
-Rscript plot.R
+# run_all.sh - runs EVERYTHING every time
+Rscript download.R   # 5 minutes
+Rscript clean.R      # 10 minutes
+Rscript analyze.R    # 30 minutes
+Rscript plot.R       # 2 minutes
+# Total: 47 minutes every run!
 ```
 
-**Limitations:**
+. . .
 
-- Runs everything every time
-- No dependency tracking
-- Manual ordering
-- No parallelization
+**Makefile advantages:**
 
----
-
-## Make vs Shell Scripts
-
-**Makefile approach:**
-
-```makefile
-results.csv: raw_data.csv clean.R
-	Rscript clean.R
-
-plots/figure1.png: results.csv plot.R
-	Rscript plot.R
-```
-
-**Benefits:**
-
-- Only re-runs when inputs change
-- Automatic dependency resolution
+- Only re-runs what changed (edit plot.R → 2 min rerun!)
+- Automatic dependency tracking
 - Self-documenting workflow
 - Can run independent tasks in parallel
 
 ---
 
+## A Makefile Documents Your Pipeline
+
+Instead of keeping track in your head:
+
+. . .
+
+**Makefile explicitly states:**
+
+- `clean_data.csv` needs `raw_data.csv`
+- `results.txt` needs `clean_data.csv`
+- `plot.png` needs `results.txt`
+
+. . .
+
+If you change `raw_data.csv`, Make knows to rebuild:
+- `clean_data.csv` (directly depends on raw data)
+- `results.txt` (depends on clean data)
+- `plot.png` (depends on results)
+
+. . .
+
+**This is documented, automated, and always correct!**
+
+---
+
 ## Basic Makefile Syntax
+
+**A rule has three parts:**
 
 ```makefile
 target: dependencies
@@ -238,7 +282,7 @@ target: dependencies
 
 . . .
 
-**Example:**
+**Real example:**
 
 ```makefile
 clean_data.csv: raw_data.csv
@@ -247,50 +291,66 @@ clean_data.csv: raw_data.csv
 
 . . .
 
-- `clean_data.csv` = **target** (what you want to create)
-- `raw_data.csv` = **dependency** (what you need)
-- `Rscript clean_data.R` = **command** (how to make it)
+- **target** = file you want to create (`clean_data.csv`)
+- **dependencies** = files needed to create it (`raw_data.csv`)
+- **command** = how to create it (`Rscript clean_data.R`)
 
-**⚠️ Important: Commands MUST start with a TAB, not spaces!**
+. . .
+
+**⚠️ IMPORTANT:** Commands MUST start with a TAB character, not spaces!
 
 ---
 
-## How Make Works
+## How Make Decides What to Run
 
 When you run `make clean_data.csv`:
 
 . . .
 
-1. Check if `clean_data.csv` exists
-2. Check if `raw_data.csv` is newer than `clean_data.csv`
-3. If yes → run the command
-4. If no → skip (already up-to-date!)
+**Make asks three questions:**
+
+1. Does `clean_data.csv` exist?
+   - No → Run the command
+   - Yes → Go to question 2
 
 . . .
 
-**This is the magic! 🎩✨**
+2. Does `raw_data.csv` exist?
+   - No → Error: can't build target
+   - Yes → Go to question 3
 
-Make only rebuilds what's necessary based on file timestamps.
+. . .
+
+3. Is `raw_data.csv` newer than `clean_data.csv`?
+   - Yes → Run the command (rebuild needed)
+   - No → Skip! Target is up to date
+
+. . .
+
+**This is the magic! Make uses file timestamps to track what's outdated**
 
 ---
 
-## Real Example: Data Analysis Pipeline
+## Real Example: Let's Build a Pipeline!
 
-Let's build a complete analysis pipeline step by step!
+**Our analysis workflow:**
 
-**Our pipeline:**
-
-1. Download data from the web
-2. Clean and preprocess
+1. Download iris dataset from web
+2. Clean and filter the data
 3. Run statistical analysis
-4. Generate figures
-5. Create final report
+4. Generate visualization
+
+. . .
+
+**We'll build this step-by-step in a Makefile**
+
+Let's see how Make handles the dependencies automatically!
 
 ---
 
-## Step 1: Download Data
+## Step 1: Download the Data
 
-**Create `Makefile`:**
+**First rule in our `Makefile`:**
 
 ```makefile
 data/raw_data.csv:
@@ -305,22 +365,24 @@ data/raw_data.csv:
 
 ```bash
 make data/raw_data.csv
+# Creates directory and downloads file
 ```
 
 . . .
 
-**Run again:**
+**Run it again:**
 
 ```bash
 make data/raw_data.csv
 # make: 'data/raw_data.csv' is up to date.
+# Nothing to do!
 ```
 
 ---
 
-## Step 2: Clean Data
+## Step 2: Clean the Data
 
-**Add to `Makefile`:**
+**Add a second rule:**
 
 ```makefile
 data/clean_data.csv: data/raw_data.csv scripts/clean.R
@@ -329,19 +391,24 @@ data/clean_data.csv: data/raw_data.csv scripts/clean.R
 
 . . .
 
-**What this means:**
-
-- To create `data/clean_data.csv`...
-- You need `data/raw_data.csv` AND `scripts/clean.R`
-- Run the R script to process it
+**This rule says:**
+- To create `clean_data.csv`, you need TWO things:
+  - `raw_data.csv` (the data)
+  - `clean.R` (the script)
+- If either changes, re-run the cleaning script
 
 . . .
 
-**If you edit `clean.R`, Make knows to re-run this step!**
+**Try it:**
+- Edit `scripts/clean.R`
+- Run `make data/clean_data.csv`
+- Make sees `clean.R` changed → rebuilds `clean_data.csv`!
 
 ---
 
 ## Step 3: Statistical Analysis
+
+**Add another rule:**
 
 ```makefile
 results/statistics.txt: data/clean_data.csv scripts/analyze.R
@@ -351,41 +418,59 @@ results/statistics.txt: data/clean_data.csv scripts/analyze.R
 
 . . .
 
-**Chain of dependencies:**
+**Now we have a chain:**
 
-`raw_data.csv` → `clean_data.csv` → `statistics.txt`
+```
+raw_data.csv → clean_data.csv → statistics.txt
+```
 
 . . .
 
-Make automatically handles the chain!
+**Make automatically follows the chain!**
+- If you change `raw_data.csv`
+- Make rebuilds `clean_data.csv` (depends on raw data)
+- Then rebuilds `statistics.txt` (depends on clean data)
 
 ---
 
-## Step 4: Generate Figures
+## Step 4: Make Figures
+
+**Final rule:**
 
 ```makefile
-figures/plot1.png: results/statistics.txt scripts/plot.R
+figures/plot.png: results/statistics.txt scripts/plot.R
 	mkdir -p figures
 	Rscript scripts/plot.R
 ```
 
 . . .
 
-Now we have a full pipeline:
+**Complete pipeline:**
 
 ```
-raw_data.csv → clean_data.csv → statistics.txt → plot1.png
+raw_data.csv → clean_data.csv → statistics.txt → plot.png
 ```
+
+. . .
+
+**To run the entire pipeline:**
+
+```bash
+make figures/plot.png
+```
+
+Make builds each dependency in order automatically!
 
 ---
 
-## Complete Makefile Example
+## Your Complete First Makefile
 
 ```makefile
 # Download data
 data/raw_data.csv:
 	mkdir -p data
-	wget -O data/raw_data.csv https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv
+	wget -O data/raw_data.csv \
+	  https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv
 
 # Clean data
 data/clean_data.csv: data/raw_data.csv scripts/clean.R
@@ -396,152 +481,213 @@ results/statistics.txt: data/clean_data.csv scripts/analyze.R
 	mkdir -p results
 	Rscript scripts/analyze.R
 
-# Plot
-figures/plot1.png: results/statistics.txt scripts/plot.R
+# Create figure
+figures/plot.png: results/statistics.txt scripts/plot.R
 	mkdir -p figures
 	Rscript scripts/plot.R
 ```
 
 ---
 
-## Running Your Pipeline
+## Testing Your Pipeline
 
-**Run the entire pipeline:**
+**Run the full pipeline:**
 
 ```bash
-make figures/plot1.png
+make figures/plot.png
 ```
 
 . . .
 
-Make will:
-
-1. Check if `data/raw_data.csv` exists → download if needed
-2. Check if `data/clean_data.csv` is up-to-date → clean if needed
-3. Check if `results/statistics.txt` is up-to-date → analyze if needed
-4. Check if `figures/plot1.png` is up-to-date → plot if needed
+Make will execute in order:
+1. Download `raw_data.csv` (if missing)
+2. Create `clean_data.csv` (if raw data exists)
+3. Generate `statistics.txt` (if clean data exists)
+4. Build `plot.png` (if statistics exist)
 
 . . .
 
-**Only runs what's necessary!**
+**Run it again immediately:**
+
+```bash
+make figures/plot.png
+# make: 'figures/plot.png' is up to date.
+```
+
+. . .
+
+**Edit `scripts/plot.R` and run again:**
+
+Only re-runs the plotting step! (seconds instead of minutes)
 
 ---
 
-## Phony Targets
+## Phony Targets: Special Rules
 
-Some targets don't create files:
+Some targets don't create actual files:
 
 ```makefile
-.PHONY: clean all
+.PHONY: all clean
 
-all: figures/plot1.png
+all: figures/plot.png
 
 clean:
 	rm -f data/clean_data.csv
 	rm -f results/statistics.txt
-	rm -f figures/plot1.png
+	rm -f figures/plot.png
 ```
+
+. . .
+
+**`.PHONY`** tells Make these aren't real files
 
 . . .
 
 **Usage:**
 
 ```bash
-make all    # Build everything
-make clean  # Remove generated files
+make all    # Build the final output
+make clean  # Remove generated files, start fresh
 ```
+
+. . .
+
+**Why `.PHONY`?**
+Without it, if a file named "clean" exists, `make clean` won't run!
 
 ---
 
-## Variables for Cleaner Makefiles
+## Making Makefiles Readable with Variables
+
+**Instead of repeating paths:**
 
 ```makefile
-# Define variables
-R = Rscript
+# Define variables at the top
 DATA_DIR = data
-RESULTS_DIR = results
-FIGURES_DIR = figures
+SCRIPTS = scripts
+RESULTS = results
+FIGURES = figures
 
-# Use variables
-$(DATA_DIR)/clean_data.csv: $(DATA_DIR)/raw_data.csv scripts/clean.R
-	$(R) scripts/clean.R
+# Use variables in rules
+$(DATA_DIR)/clean_data.csv: $(DATA_DIR)/raw_data.csv $(SCRIPTS)/clean.R
+	Rscript $(SCRIPTS)/clean.R
 
-$(FIGURES_DIR)/plot1.png: $(RESULTS_DIR)/statistics.txt scripts/plot.R
-	mkdir -p $(FIGURES_DIR)
-	$(R) scripts/plot.R
+$(FIGURES)/plot.png: $(RESULTS)/statistics.txt $(SCRIPTS)/plot.R
+	mkdir -p $(FIGURES)
+	Rscript $(SCRIPTS)/plot.R
 ```
 
 . . .
 
-**Benefits:** Easy to change paths or commands in one place!
+**Benefits:**
+- Change paths in one place
+- Easier to read and maintain
+- Less prone to typos
 
 ---
 
-## Pattern Rules
+## Pattern Rules: DRY Principle
 
-For repetitive tasks:
+**Problem:** Converting many CSV files to Excel format
+
+**Without pattern rules (repetitive!):**
 
 ```makefile
-# Convert all .csv files to .xlsx
-%.xlsx: %.csv
-	python convert_to_excel.py $< $@
+results/table1.xlsx: results/table1.csv
+	python convert.py results/table1.csv results/table1.xlsx
+
+results/table2.xlsx: results/table2.csv
+	python convert.py results/table2.csv results/table2.xlsx
+
+results/table3.xlsx: results/table3.csv
+	python convert.py results/table3.csv results/table3.xlsx
 ```
 
 . . .
 
-**Special variables:**
+**With pattern rules (elegant!):**
 
-- `$<` = first dependency (`%.csv`)
-- `$@` = target (`%.xlsx`)
+```makefile
+%.xlsx: %.csv
+	python convert.py $< $@
+```
 
-. . .
-
-This rule works for ANY csv → xlsx conversion!
+This one rule handles ALL csv → xlsx conversions!
 
 ---
 
-## Real-World Example: Complete Pipeline
+## Pattern Rule Syntax
+
+```makefile
+%.xlsx: %.csv
+	python convert.py $< $@
+```
+
+. . .
+
+**Breaking it down:**
+
+- `%` = wildcard matching any string
+- `%.xlsx` = target pattern (e.g., `table1.xlsx`, `table2.xlsx`)
+- `%.csv` = dependency pattern (e.g., `table1.csv`, `table2.csv`)
+
+. . .
+
+**Automatic variables:**
+
+- `$<` = first dependency (the `.csv` file)
+- `$@` = target (the `.xlsx` file)
+
+. . .
+
+**Example:** For `results/table1.xlsx`:
+- `$<` expands to `results/table1.csv`
+- `$@` expands to `results/table1.xlsx`
+
+---
+
+## Putting It All Together
+
+**A complete, well-organized Makefile:**
 
 ```makefile
 .PHONY: all clean
 
 # Variables
-R = Rscript
-DATA = data/iris.csv
-CLEAN_DATA = data/iris_clean.csv
-RESULTS = results/model_summary.txt
-FIGURE = figures/iris_plot.png
+DATA = data
+RESULTS = results
+FIGURES = figures
 
 # Default target
-all: $(FIGURE)
+all: $(FIGURES)/iris_plot.png
 
-# Pipeline
-$(DATA):
-	mkdir -p data
-	wget -O $(DATA) \
+# Pipeline rules
+$(DATA)/iris.csv:
+	mkdir -p $(DATA)
+	wget -O $@ \
 	  https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv
 
-$(CLEAN_DATA): $(DATA) scripts/clean.R
-	$(R) scripts/clean.R
+$(DATA)/iris_clean.csv: $(DATA)/iris.csv scripts/clean.R
+	Rscript scripts/clean.R
 
-$(RESULTS): $(CLEAN_DATA) scripts/analyze.R
-	mkdir -p results
-	$(R) scripts/analyze.R
+$(RESULTS)/model_summary.txt: $(DATA)/iris_clean.csv scripts/analyze.R
+	mkdir -p $(RESULTS)
+	Rscript scripts/analyze.R
 
-$(FIGURE): $(RESULTS) scripts/plot.R
-	mkdir -p figures
-	$(R) scripts/plot.R
+$(FIGURES)/iris_plot.png: $(RESULTS)/model_summary.txt scripts/plot.R
+	mkdir -p $(FIGURES)
+	Rscript scripts/plot.R
 
-# Clean up
+# Cleanup
 clean:
-	rm -rf data results figures
+	rm -rf $(DATA) $(RESULTS) $(FIGURES)
 ```
 
 ---
 
-## Parallel Execution
+## Parallel Execution (Bonus)
 
-Make can run independent tasks simultaneously:
+If you have independent tasks, Make can run them simultaneously:
 
 ```makefile
 all: figure1.png figure2.png figure3.png
@@ -559,27 +705,29 @@ figure3.png: data.csv script3.R
 **Run in parallel:**
 
 ```bash
-make -j 3 all  # Run 3 jobs simultaneously
+make -j 3 all  # Run up to 3 jobs at once
 ```
+
+Great for speeding up independent analyses!
 
 ---
 
-## When to Use Make vs R Scripts
+## When Should You Use Make?
 
-**Use Make when:**
+**✅ Use Make when:**
 
-- Multiple steps in your pipeline
-- Different tools (R, Python, bash)
-- Long-running computations
-- Need to track dependencies
+- Multi-step pipeline (download → clean → analyze → visualize)
+- Long-running computations (don't want to rerun everything)
+- Multiple tools involved (R + Python + shell scripts)
+- Team collaboration (document the workflow clearly)
 
 . . .
 
-**Stick with R scripts when:**
+**📝 Stick with simple R scripts when:**
 
-- Everything fits in one R script
-- Very simple analysis
-- No intermediate files
+- Single analysis that fits in one script
+- Very quick computations (seconds)
+- No intermediate files to track
 
 ---
 
@@ -594,169 +742,134 @@ make -j 3 all  # Run 3 jobs simultaneously
 
 ---
 
-## Common Pitfalls
+## Common Pitfalls to Avoid
 
-❌ **Using spaces instead of tabs**
+**❌ Tabs vs Spaces**
 
 ```makefile
 target: dependency
-    command  # WRONG! This is spaces
-	command  # RIGHT! This is a tab
+    command  # WRONG! These are spaces
+	command  # RIGHT! This is a TAB character
 ```
+
+Set your text editor to show whitespace characters!
 
 . . .
 
-❌ **Circular dependencies**
+**❌ Circular Dependencies**
 
 ```makefile
 a.txt: b.txt
-	cat b.txt > a.txt
+	process b.txt > a.txt
 
-b.txt: a.txt  # CIRCULAR!
-	cat a.txt > b.txt
-```
-
----
-
-## Debugging Tips
-
-**Check what Make would do:**
-
-```bash
-make -n target  # Dry run, shows commands without executing
+b.txt: a.txt  # ERROR: Can't have both depend on each other!
+	process a.txt > b.txt
 ```
 
 . . .
 
-**See why Make rebuilds:**
+**❌ Forgetting `.PHONY`**
+
+If you have a file named "clean", `make clean` won't work without `.PHONY: clean`
+
+---
+
+## Debugging Your Makefile
+
+**See what Make would do (without running):**
 
 ```bash
-make -d target  # Debug mode, verbose output
+make -n target  # "Dry run" - prints commands only
 ```
 
 . . .
 
-**Force rebuild:**
+**Understand why Make rebuilds something:**
 
 ```bash
-make -B target  # Rebuild regardless of timestamps
-```
-
----
-
-## Example: Why Make > Shell Script
-
-**Shell script approach:**
-
-```bash
-#!/bin/bash
-Rscript download.R     # Always runs (even if data unchanged)
-Rscript clean.R        # Always runs
-Rscript analyze.R      # Always runs
-Rscript plot.R         # Always runs
-# Takes 30 minutes every time!
+make -d target  # Debug mode with verbose output
 ```
 
 . . .
 
-**Makefile approach:**
+**Force a complete rebuild:**
 
 ```bash
-make all
-# First run: 30 minutes
-# Edit plot.R and re-run: 10 seconds (only reruns plotting!)
-# No changes: instant (nothing to do!)
+make -B target  # Rebuild everything, ignore timestamps
 ```
-
----
-
-## Hands-On Exercise (Optional)
-
-**Try this yourself:**
-
-1. Create a simple `Makefile`
-2. Add a target that creates a text file
-3. Add a target that depends on that file
-4. Run `make` and observe behavior
-5. Touch a file and run `make` again
-
-**Example starter:**
-
-```makefile
-hello.txt:
-	echo "Hello, Make!" > hello.txt
-
-goodbye.txt: hello.txt
-	cat hello.txt | sed 's/Hello/Goodbye/' > goodbye.txt
-```
-
----
-
-## Advanced Topics (For Later)
-
-Once comfortable with basics:
-
-- **Automatic variables** (`$@`, `$<`, `$^`)
-- **Functions** (`wildcard`, `patsubst`)
-- **Conditional execution** (`ifeq`, `ifdef`)
-- **Including other Makefiles**
-- **Integration with version control**
-- **Make for reports** (Quarto, R Markdown)
-
----
-
-## Resources
-
-**Documentation:**
-
-- GNU Make Manual: <https://www.gnu.org/software/make/manual/>
-- Make for reproducible research: <https://makefiletutorial.com/>
 
 . . .
 
-**Tutorials:**
+**Pro tip:** Start with `make -n` to check your Makefile logic before running expensive computations!
 
-- Software Carpentry: Make for Data Analysis
-- Minimal Make by Karl Broman
+---
+
+## Resources and References
+
+**Official Documentation:**
+
+- [GNU Make Manual](https://www.gnu.org/software/make/manual/)
+- [Make Tutorial](https://makefiletutorial.com/)
 
 . . .
 
-**Getting Help:**
+**This workshop is based on:**
 
-- `man make` (in terminal)
-- Stack Overflow: `[makefile]` tag
+- [STAT 545 Automating Data-analysis Pipelines](https://github.com/STAT545-UBC/STAT545-UBC-original-website/blob/master/automation01_slides/slides.md) by Shaun Jackman & Jenny Bryan
+- [Software Carpentry: Automation and Make](https://swcarpentry.github.io/make-novice/)
+
+. . .
+
+**Further Reading:**
+
+- [Minimal Make](https://kbroman.org/minimal_make/) by Karl Broman
+- [Why Use Make](https://bost.ocks.org/mike/make/) by Mike Bostock
 
 ---
 
 ## Key Takeaways
 
-✅ **Make tracks dependencies** between files
+**Remember these core concepts:**
 
 . . .
 
-✅ **Only rebuilds what's necessary** (saves time!)
+✅ Make **tracks dependencies** between files automatically
 
 . . .
 
-✅ **Documents your workflow** in one place
+✅ Make **only rebuilds what changed** (massive time savings!)
 
 . . .
 
-✅ **Works with any tools** (R, Python, bash, etc.)
+✅ Makefiles **document your entire workflow** in one place
 
 . . .
 
-✅ **Essential for reproducible research**
+✅ Works with **any tools** (R, Python, shell scripts, etc.)
+
+. . .
+
+✅ **Essential for reproducible research** workflows
 
 ---
 
 ## Your Next Steps
 
-1. **Start small**: Convert one script to a Makefile
-2. **Build incrementally**: Add one target at a time
-3. **Test often**: Run `make` frequently
-4. **Read the manual**: When you need advanced features
-5. **Share your Makefiles**: Help others reproduce your work!
+**Starting your first Makefile:**
+
+1. **Pick a current project** with 2-3 scripts
+2. **Start simple**: Just add rules for your main outputs
+3. **Test each rule** as you add it (`make -n` first!)
+4. **Build incrementally**: Add variables and `.PHONY` targets
+5. **Iterate**: Refine as you learn what works
+
+. . .
+
+**Remember:** Even a simple Makefile is better than none!
+
+. . .
+
+You don't need to be an expert to benefit from Make
 
 ---
 
@@ -764,11 +877,14 @@ Once comfortable with basics:
 
 **Thank you for attending!**
 
-Remember: Reproducible research benefits everyone!
+. . .
+
+**Key message:**
+Make = Your research pipeline's documentation + automation
 
 . . .
 
-**Makefile = Your research lab notebook** 📓
+Think of your Makefile as a **lab notebook for computational work**
 
 . . .
 
