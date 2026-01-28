@@ -16,6 +16,10 @@ format:
     code-line-numbers: false
     output-file: index.html # If naming other files , gh complains
 engine: knitr
+knitr:
+  opts_chunk:
+    eval: false
+bibliography: references.bib
 ---
 
 ## Objective
@@ -28,86 +32,290 @@ Learn how to use GNU Make to automate your research workflows
 
 **What you'll learn:**
 
-- Why Make > Shell scripts for pipelines
+- Why Make > single, gigantic R script
 - Basic Make syntax
 - Real data analysis example
 
 
 
-## The Problem: Manual Workflows 😓
+## An example of our typical code workflow
 
-Typical research workflow:
+Rather than running 1 gigantic R script, we were smart enough to run smaller scripts of it
 
-```{bash}
+```{r}
 #| echo: true
 #| eval: false
-#| code-line-numbers: false
+#| code-overflow: scroll
+#| code-summary: "my_full_experiment_version2.R"
+#| code-fold: true
+#| code-line-numbers: true
 
-# Download data
-Rscript download_data.R
+suppressPackageStartupMessages(library(dplyr))
+library(readr)
+library(broom)
+library(ggplot2)
+library(patchwork)
 
-# Clean data
-Rscript clean_data.R
+# Download data from internet
+dest <- "data/iris.csv"
+url <- "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
+download.file(url, dest, quiet = FALSE)
 
-# Analyze
-Rscript analyze.R
+# Read raw data
+iris_clean <- read_csv("data/iris.csv", show_col_types = FALSE)
 
-# Make figures
-Rscript make_figures.R
+# Clean the data
+iris_clean <- iris_clean %>%
+  tidyr::drop_na() %>%                     # Remove rows with missing values
+  rename_with(tolower) %>%          # Standardize column names to lowercase
+  mutate(id = row_number())         # Add a unique ID column
+
+# Write cleaned data
+#write_csv(iris_clean, "data/iris_clean.csv")
+
+cat("Data cleaning complete!\n")
+cat(sprintf("  Original rows: %d\n", nrow(iris_clean)))
+cat(sprintf("  Cleaned rows: %d\n", nrow(iris_clean)))
+
+
+# Read cleaned data
+#iris_clean <- read_csv("data/iris_clean.csv")
+
+# 1. Summary statistics by species
+summary_stats <- iris_clean %>%
+  group_by(species) %>%
+  summarise(
+    across(c(sepal_length, sepal_width, petal_length, petal_width),
+           list(mean = mean, sd = sd),
+           .names = "{.col}_{.fn}")
+  )
+
+# 2. Fit a simple linear model
+model <- lm(sepal_length ~ petal_length + species, data = iris_clean)
+model_tidy <- tidy(model)
+model_glance <- glance(model)
+
+# Create output file
+sink("results/model_summary.txt")
+
+cat(strrep("=", 60), "\n")
+cat("IRIS DATASET ANALYSIS\n")
+cat(strrep("=", 60), "\n\n")
+
+cat("Summary Statistics by Species:\n")
+cat(strrep("-", 60), "\n")
+print(summary_stats)
+
+cat("\n\nLinear Model Results:\n")
+cat(strrep("-", 60), "\n")
+cat("Model: sepal_length ~ petal_length + species\n\n")
+print(model_tidy)
+
+cat("\nModel Fit Statistics:\n")
+print(model_glance)
+
+cat("\n", strrep("=", 60), "\n")
+cat("Analysis complete!\n")
+
+sink()
+
+cat("Analysis results saved to results/model_summary.txt\n")
+
+# Read cleaned data
+#iris_clean <- read_csv("data/iris_clean.csv", show_col_types = FALSE)
+
+
+
+# Plot 1: Sepal Length vs Petal Length
+p1 <- ggplot(iris_clean, aes(x = petal_length, y = sepal_length, color = species)) +
+  geom_point(size = 3) +
+  labs(
+    x = "Petal Length (cm)",
+    y = "Sepal Length (cm)",
+    title = "Sepal vs Petal Length"
+  ) +
+  theme_minimal()
+
+# Plot 2: Sepal Width vs Petal Width
+p2 <- ggplot(iris_clean, aes(x = petal_width, y = sepal_width, color = species)) +
+  geom_point(size = 3) +
+  labs(
+    x = "Petal Width (cm)",
+    y = "Sepal Width (cm)",
+    title = "Sepal vs Petal Width"
+  ) +
+  theme_minimal()
+
+# Plot 3: Distribution of Sepal Length by Species
+p3 <- ggplot(iris_clean, aes(x = species, y = sepal_length, fill = species)) +
+  geom_boxplot() +
+  labs(
+    x = "Species",
+    y = "Sepal Length (cm)",
+    title = "Sepal Length by Species"
+  ) +
+  scale_fill_manual(values = c("lightblue", "lightgreen", "lightcoral")) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Plot 4: Distribution of Petal Length by Species
+p4 <- ggplot(iris_clean, aes(x = species, y = petal_length, fill = species)) +
+  geom_boxplot() +
+  labs(
+    x = "Species",
+    y = "Petal Length (cm)",
+    title = "Petal Length by Species"
+  ) +
+  scale_fill_manual(values = c("lightblue", "lightgreen", "lightcoral")) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Save all plots in a 2x2 grid
+joined_plot <- (p1 | p2) / (p3 | p4) +
+  plot_layout(guides = "collect")  # Collect all legends into one
+
+
+ggsave("figures/iris_plot.png", joined_plot, width = 12, height = 8, dpi = 150)
+
+cat("Plot saved to figures/iris_plot.png\n")
+
+
 ```
 
 . . .
 
 **Problems:**
 
-- Which scripts did I run?
-- Did I re-run everything after updating data?
+- What if I want to change my analysis
 - What if one step fails halfway through?
+- What order should I run?
+
+. . .
+
+✅ **Decompose this to modular unit scripts**
+
+## A better example of our typical code workflow
+
+```{bash}
+#| echo: true
+#| eval: false
+#| code-fold: false
+
+# Step 1: Download data
+Rscript download_data.R
+# Step 2: Clean the data
+Rscript clean_data.R
+# Step 3: Run analysis
+Rscript analyze.R
+# Step 4: Make figures
+Rscript make_figures.R
+```
+
+You run all four scripts now, Analysis complete! ✅ 
 
 
-## The Problem Continued
+## Then You Update Your Analysis Script...
 
-**What happens when you update the data?**
+- You realize you need to fix a bug in `analyze.R`
+
+. . .
+
+**Question: Which scripts need to be re-run?**
+
+. . .
+
+:::: {.segments}
+
+::: {.column width="45%"}
+
+1. Just `analyze.R`
+2. Both `analyze.R` and `make_figures.R`
+3. All four scripts?
+4. Not sure..., better run them all!
+
+:::
+
+::: {.column width="10%"}
+<!--- Purpose empty col for gap -->
+:::
+
+
+::: {.column width="45%"}
+
+
+
+```{bash}
+#| echo: true
+#| eval: false
+#| code-fold: false
+# Step 1: Download data
+Rscript download_data.R
+# Step 2: Clean the data
+Rscript clean_data.R
+# Step 3: Run analysis
+Rscript analyze.R
+# Step 4: Make figures
+Rscript make_figures.R
+```
+
+:::
+
+
+::::
+
+
+## New slide
+
+
+- What if I want to add more analysis there?
+- How do you know what order to run?
+- What happens when you update the data?
 
 . . .
 
 ❌ Re-run everything (slow!)
 
-. . .
-
 ❌ Manually track what needs updating (error-prone!)
-
-. . .
 
 ❌ Forget to update downstream files (wrong results!)
 
 . . .
 
-✅ **Solution: GNU Make automatically tracks dependencies!**
+✅ **Decompose this to modular unit, and pipe them up with GNU Make**
 
+## What is GNU Make? 
 
-## What is GNU Make? 🔧
+:::: {.segments}
 
-["GNU is not unix"]{.primary}, a build automation tool that:
-
-. . .
+::: {.column width="82%"}
+"GNU is not unix" [@stallman1998gnu], a build automation tool that:
 
 1. Tracks dependencies between files
 2. **Runs only what's needed** when files change
 3. Documents your workflow in one place
 4. **Ensures reproducibility**
 
+:::
+
+::: {.column width="18%"}
+
+![](assets/gnu_make_logo.png)
+:::
+
+::::
+
 . . .
 
 Originally designed for compiling software, but perfect for data analysis!
 
-```{notes}
+::: {.notes}
 - Make is language agnostic, so it can run any program compatible with a Unix shel
 
 - Make is pretty steep. It’s frustrating to learn, and it can be tricky to use even after you’ve learned the basics. 
 
 - Make has no graphical user interface, so you need to have at least a basic familiarity with the Unix command line. You also have to know how to run scripts non-interactively. 
-```
+:::
+
 
 ## Basic Makefile Syntax
 
@@ -126,15 +334,15 @@ target: dependencies
 #| echo: true
 #| eval: false
 #| code-line-numbers: true
-clean_data.csv: raw_data.csv
-	Rscript clean_data.R
+mean_normal_distribution.txt: sample_from_normal_distribution.R
+  Rscript sample_from_normal_distribution.R
 ```
 
 . . .
 
-- `clean_data.csv` = **target** (what you want to create)
-- `raw_data.csv` = **dependency** (what you need)
-- `Rscript clean_data.R` = **command** (how to make it)
+- `mean_normal_distribution.txt` = **target** (what you want to create)
+- `sample_from_normal_distribution.R` = **dependency** (what you need)
+- `Rscript sample_from_normal_distribution.R` = **command** (how to make it)
 
 **⚠️ Important: Commands MUST start with a TAB, not spaces!**
 
@@ -142,70 +350,192 @@ clean_data.csv: raw_data.csv
 
 ## How Make Works
 
-When you run `make clean_data.csv`:
+When you run `make mean_normal_distribution.txt`:
 
 . . .
 
-1. Check if `clean_data.csv` exists
-2. Check if `raw_data.csv` is newer than `clean_data.csv`
+1. Check if the `mean_normal_distribution.txt` exists
+2. Check if the  `sample_from_normal_distribution.R` is newer than `mean_normal_distribution.txt`
 3. If yes → run the command
 4. If no → skip (already up-to-date!)
 
 . . .
 
+
 **This is the magic! 🎩✨**
 
 Make only rebuilds what's necessary based on file timestamps.
 
+## Real World Usage 
 
-## Make vs Shell Scripts
+![Adapted from https://www.evan-soil.io/blog/ode-to-gnu-make/](assets/example-dependency-graph.png)
 
-**Makefile approach:**
+- You want to track how you create every figure you used in your manuscript (`ideally`)
+- You want to save time by re-running as little code as possible
 
-```makefile
-results.csv: raw_data.csv clean.R
-	Rscript clean.R
 
-plots/figure1.png: results.csv plot.R
-	Rscript plot.R
+## Real Example: Data Analysis Pipeline
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-overflow: scroll 
+#| code-fold: show
+#| code-line-numbers: true
+
+suppressPackageStartupMessages(library(dplyr))
+library(readr)
+library(broom)
+library(ggplot2)
+library(patchwork)
+
+
+# Download data from internet
+dest <- "data/iris.csv"
+url <- "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
+download.file(url, dest, quiet = FALSE)
+
+# Read raw data
+iris_clean <- read_csv("data/iris.csv", show_col_types = FALSE)
+
+# Clean the data
+iris_clean <- iris_clean %>%
+  tidyr::drop_na() %>%                     # Remove rows with missing values
+  rename_with(tolower) %>%          # Standardize column names to lowercase
+  mutate(id = row_number())         # Add a unique ID column
+
+# Write cleaned data
+#write_csv(iris_clean, "data/iris_clean.csv")
+
+cat("Data cleaning complete!\n")
+cat(sprintf("  Original rows: %d\n", nrow(iris_clean)))
+cat(sprintf("  Cleaned rows: %d\n", nrow(iris_clean)))
+
+
+# Read cleaned data
+#iris_clean <- read_csv("data/iris_clean.csv")
+
+# 1. Summary statistics by species
+summary_stats <- iris_clean %>%
+  group_by(species) %>%
+  summarise(
+    across(c(sepal_length, sepal_width, petal_length, petal_width),
+           list(mean = mean, sd = sd),
+           .names = "{.col}_{.fn}")
+  )
+
+# 2. Fit a simple linear model
+model <- lm(sepal_length ~ petal_length + species, data = iris_clean)
+model_tidy <- tidy(model)
+model_glance <- glance(model)
+
+
+# Create output file
+sink("results/model_summary.txt")
+
+cat(strrep("=", 60), "\n")
+cat("IRIS DATASET ANALYSIS\n")
+cat(strrep("=", 60), "\n\n")
+
+cat("Summary Statistics by Species:\n")
+cat(strrep("-", 60), "\n")
+print(summary_stats)
+
+cat("\n\nLinear Model Results:\n")
+cat(strrep("-", 60), "\n")
+cat("Model: sepal_length ~ petal_length + species\n\n")
+print(model_tidy)
+
+cat("\nModel Fit Statistics:\n")
+print(model_glance)
+
+cat("\n", strrep("=", 60), "\n")
+cat("Analysis complete!\n")
+
+sink()
+
+cat("Analysis results saved to results/model_summary.txt\n")
+
+# Read cleaned data
+#iris_clean <- read_csv("data/iris_clean.csv", show_col_types = FALSE)
+
+
+
+# Plot 1: Sepal Length vs Petal Length
+p1 <- ggplot(iris_clean, aes(x = petal_length, y = sepal_length, color = species)) +
+  geom_point(size = 3) +
+  labs(
+    x = "Petal Length (cm)",
+    y = "Sepal Length (cm)",
+    title = "Sepal vs Petal Length"
+  ) +
+  theme_minimal()
+
+# Plot 2: Sepal Width vs Petal Width
+p2 <- ggplot(iris_clean, aes(x = petal_width, y = sepal_width, color = species)) +
+  geom_point(size = 3) +
+  labs(
+    x = "Petal Width (cm)",
+    y = "Sepal Width (cm)",
+    title = "Sepal vs Petal Width"
+  ) +
+  theme_minimal()
+
+# Plot 3: Distribution of Sepal Length by Species
+p3 <- ggplot(iris_clean, aes(x = species, y = sepal_length, fill = species)) +
+  geom_boxplot() +
+  labs(
+    x = "Species",
+    y = "Sepal Length (cm)",
+    title = "Sepal Length by Species"
+  ) +
+  scale_fill_manual(values = c("lightblue", "lightgreen", "lightcoral")) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Plot 4: Distribution of Petal Length by Species
+p4 <- ggplot(iris_clean, aes(x = species, y = petal_length, fill = species)) +
+  geom_boxplot() +
+  labs(
+    x = "Species",
+    y = "Petal Length (cm)",
+    title = "Petal Length by Species"
+  ) +
+  scale_fill_manual(values = c("lightblue", "lightgreen", "lightcoral")) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Save all plots in a 2x2 grid
+joined_plot <- (p1 | p2) / (p3 | p4) +
+  plot_layout(guides = "collect")  # Collect all legends into one
+
+
+ggsave("figures/iris_plot.png", joined_plot, width = 12, height = 8, dpi = 150)
+
+cat("Plot saved to figures/iris_plot.png\n")
+
+
+
 ```
 
-**Benefits:**
+::: {.notes}
 
-- Only re-runs when inputs change
-- Automatic dependency resolution
-- Self-documenting workflow
-- Can run independent tasks in parallel
+Suppose we have a big script that does everything for us: gather data, wrangling operations, fit stat model, and plot figures
 
+- Hard to tell where exactly fails if anything happens
+- Rerun from top to bottom NO MATTER WHAT
+- **Pain** to review code
 
-
-## Make vs Shell Scripts
-
-**Shell script approach:**
-
-```bash
-#!/bin/bash
-# run_all.sh
-Rscript download.R
-Rscript clean.R
-Rscript analyze.R
-Rscript plot.R
-```
-
-**Limitations:**
-
-- Runs everything every time
-- No dependency tracking
-- Manual ordering
-- No parallelization
-
+:::
 
 
 
 
 ## Real Example: Data Analysis Pipeline
 
-Let's build a complete analysis pipeline step by step!
+Let's build a complete analysis pipeline step by step by moving code out from this big R script file.
+
+. . .
 
 **Our pipeline:**
 
@@ -215,17 +545,25 @@ Let's build a complete analysis pipeline step by step!
 4. Generate figures
 5. Create final report
 
----
+
 
 ## Step 1: Download Data
 
-**Create `Makefile`:**
+```{r}
+#| code-fold: true
+#| code-summary: "scripts/download_data.R"
+#| echo: true
+
+dest <- "data/iris.csv"
+url <- "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
+download.file(url, dest, quiet = FALSE)
+```
+
+Open `Makefile` and add the corresponding target:
 
 ```makefile
-data/raw_data.csv:
-	mkdir -p data
-	wget -O data/raw_data.csv \
-	  https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv
+data/iris.csv: scripts/download_data.R
+  Rscript scripts/download_data.R
 ```
 
 . . .
@@ -233,7 +571,7 @@ data/raw_data.csv:
 **Run it:**
 
 ```bash
-make data/raw_data.csv
+make data/iris.csv
 ```
 
 . . .
@@ -268,521 +606,566 @@ data/clean_data.csv: data/raw_data.csv scripts/clean.R
 
 **If you edit `clean.R`, Make knows to re-run this step!**
 
----
 
-## Step 3: Statistical Analysis
+<!-- ## Step 3: Statistical Analysis -->
 
-```makefile
-results/statistics.txt: data/clean_data.csv scripts/analyze.R
-	mkdir -p results
-	Rscript scripts/analyze.R
-```
+<!-- ```makefile -->
+<!-- results/statistics.txt: data/clean_data.csv scripts/analyze.R -->
+<!-- 	mkdir -p results -->
+<!-- 	Rscript scripts/analyze.R -->
+<!-- ``` -->
 
-. . .
+<!-- . . . -->
 
-**Chain of dependencies:**
+<!-- **Chain of dependencies:** -->
 
-`raw_data.csv` → `clean_data.csv` → `statistics.txt`
+<!-- `raw_data.csv` → `clean_data.csv` → `statistics.txt` -->
 
-. . .
+<!-- . . . -->
 
-Make automatically handles the chain!
+<!-- Make automatically handles the chain! -->
 
----
+<!-- --- -->
 
-## Step 4: Generate Figures
+<!-- ## Step 4: Generate Figures -->
 
-```makefile
-figures/plot1.png: results/statistics.txt scripts/plot.R
-	mkdir -p figures
-	Rscript scripts/plot.R
-```
+<!-- ```makefile -->
+<!-- figures/plot1.png: results/statistics.txt scripts/plot.R -->
+<!-- 	mkdir -p figures -->
+<!-- 	Rscript scripts/plot.R -->
+<!-- ``` -->
 
-. . .
+<!-- . . . -->
 
-Now we have a full pipeline:
+<!-- Now we have a full pipeline: -->
 
-```
-raw_data.csv → clean_data.csv → statistics.txt → plot1.png
-```
+<!-- ``` -->
+<!-- raw_data.csv → clean_data.csv → statistics.txt → plot1.png -->
+<!-- ``` -->
 
----
+<!-- --- -->
 
-## Complete Makefile Example
+<!-- ## Complete Makefile Example -->
 
-```makefile
-# Download data
-data/raw_data.csv:
-	mkdir -p data
-	wget -O data/raw_data.csv https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv
+<!-- ```makefile -->
+<!-- # Download data -->
+<!-- data/raw_data.csv: -->
+<!-- 	mkdir -p data -->
+<!-- 	wget -O data/raw_data.csv https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv -->
 
-# Clean data
-data/clean_data.csv: data/raw_data.csv scripts/clean.R
-	Rscript scripts/clean.R
+<!-- # Clean data -->
+<!-- data/clean_data.csv: data/raw_data.csv scripts/clean.R -->
+<!-- 	Rscript scripts/clean.R -->
 
-# Analyze
-results/statistics.txt: data/clean_data.csv scripts/analyze.R
-	mkdir -p results
-	Rscript scripts/analyze.R
+<!-- # Analyze -->
+<!-- results/statistics.txt: data/clean_data.csv scripts/analyze.R -->
+<!-- 	mkdir -p results -->
+<!-- 	Rscript scripts/analyze.R -->
 
-# Plot
-figures/plot1.png: results/statistics.txt scripts/plot.R
-	mkdir -p figures
-	Rscript scripts/plot.R
-```
+<!-- # Plot -->
+<!-- figures/plot1.png: results/statistics.txt scripts/plot.R -->
+<!-- 	mkdir -p figures -->
+<!-- 	Rscript scripts/plot.R -->
+<!-- ``` -->
 
----
+<!-- --- -->
 
-## Running Your Pipeline
+<!-- ## Running Your Pipeline -->
 
-**Run the entire pipeline:**
+<!-- **Run the entire pipeline:** -->
 
-```bash
-make figures/plot1.png
-```
+<!-- ```bash -->
+<!-- make figures/plot1.png -->
+<!-- ``` -->
 
-. . .
+<!-- . . . -->
 
-Make will:
+<!-- Make will: -->
 
-1. Check if `data/raw_data.csv` exists → download if needed
-2. Check if `data/clean_data.csv` is up-to-date → clean if needed
-3. Check if `results/statistics.txt` is up-to-date → analyze if needed
-4. Check if `figures/plot1.png` is up-to-date → plot if needed
+<!-- 1. Check if `data/raw_data.csv` exists → download if needed -->
+<!-- 2. Check if `data/clean_data.csv` is up-to-date → clean if needed -->
+<!-- 3. Check if `results/statistics.txt` is up-to-date → analyze if needed -->
+<!-- 4. Check if `figures/plot1.png` is up-to-date → plot if needed -->
 
-. . .
+<!-- . . . -->
 
-**Only runs what's necessary!**
+<!-- **Only runs what's necessary!** -->
 
----
+<!-- --- -->
 
-## Phony Targets
+<!-- ## Phony Targets -->
 
-Some targets don't create files:
+<!-- Some targets don't create files: -->
 
-```makefile
-.PHONY: clean all
+<!-- ```makefile -->
+<!-- .PHONY: clean all -->
 
-all: figures/plot1.png
+<!-- all: figures/plot1.png -->
 
-clean:
-	rm -f data/clean_data.csv
-	rm -f results/statistics.txt
-	rm -f figures/plot1.png
-```
+<!-- clean: -->
+<!-- 	rm -f data/clean_data.csv -->
+<!-- 	rm -f results/statistics.txt -->
+<!-- 	rm -f figures/plot1.png -->
+<!-- ``` -->
 
-. . .
+<!-- . . . -->
 
-**Usage:**
+<!-- **Usage:** -->
 
-```bash
-make all    # Build everything
-make clean  # Remove generated files
-```
+<!-- ```bash -->
+<!-- make all    # Build everything -->
+<!-- make clean  # Remove generated files -->
+<!-- ``` -->
 
----
+<!-- --- -->
 
-## Sometimes convenience target
+<!-- ## Sometimes convenience target -->
 
-Sometimes, you just want to have everything to send out to your collaborators
+<!-- Sometimes, you just want to have everything to send out to your collaborators -->
 
-```makefile
-collaboration-packet.zip: data-wrangling.R raw-data.csv paper.Rmd comments.txt
-    Rscript data-wrangling.R  clean-data.csv
-    gzip collaboration-packet.zip clean-data.csv paper.Rmd comments.txt
-```
+<!-- ```makefile -->
+<!-- collaboration-packet.zip: data-wrangling.R raw-data.csv paper.Rmd comments.txt -->
+<!--     Rscript data-wrangling.R  clean-data.csv -->
+<!--     gzip collaboration-packet.zip clean-data.csv paper.Rmd comments.txt -->
+<!-- ``` -->
 
-## Variables for Cleaner Makefiles
+<!-- ## Variables for Cleaner Makefiles -->
 
-```makefile
-# Define variables
-R = Rscript
-DATA_DIR = data
-RESULTS_DIR = results
-FIGURES_DIR = figures
+<!-- ```makefile -->
+<!-- # Define variables -->
+<!-- R = Rscript -->
+<!-- DATA_DIR = data -->
+<!-- RESULTS_DIR = results -->
+<!-- FIGURES_DIR = figures -->
 
-# Use variables
-$(DATA_DIR)/clean_data.csv: $(DATA_DIR)/raw_data.csv scripts/clean.R
-	$(R) scripts/clean.R
+<!-- # Use variables -->
+<!-- $(DATA_DIR)/clean_data.csv: $(DATA_DIR)/raw_data.csv scripts/clean.R -->
+<!-- 	$(R) scripts/clean.R -->
 
-$(FIGURES_DIR)/plot1.png: $(RESULTS_DIR)/statistics.txt scripts/plot.R
-	mkdir -p $(FIGURES_DIR)
-	$(R) scripts/plot.R
-```
+<!-- $(FIGURES_DIR)/plot1.png: $(RESULTS_DIR)/statistics.txt scripts/plot.R -->
+<!-- 	mkdir -p $(FIGURES_DIR) -->
+<!-- 	$(R) scripts/plot.R -->
+<!-- ``` -->
 
-. . .
+<!-- . . . -->
 
-**Benefits:** Easy to change paths or commands in one place!
+<!-- **Benefits:** Easy to change paths or commands in one place! -->
 
----
+<!-- --- -->
 
-## Pattern Rules
+<!-- ## Pattern Rules -->
 
-For repetitive tasks:
+<!-- For repetitive tasks: -->
 
-```makefile
-# Convert all .csv files to .xlsx
-%.xlsx: %.csv
-	python convert_to_excel.py $< $@
-```
+<!-- ```makefile -->
+<!-- # Convert all .csv files to .xlsx -->
+<!-- %.xlsx: %.csv -->
+<!-- 	python convert_to_excel.py $< $@ -->
+<!-- ``` -->
 
-. . .
+<!-- . . . -->
 
-**Special variables:**
+<!-- **Special variables:** -->
 
-- `$<` = first dependency (`%.csv`)
-- `$@` = target (`%.xlsx`)
+<!-- - `$<` = first dependency (`%.csv`) -->
+<!-- - `$@` = target (`%.xlsx`) -->
 
-. . .
+<!-- . . . -->
 
-This rule works for ANY csv → xlsx conversion!
+<!-- This rule works for ANY csv → xlsx conversion! -->
 
----
+<!-- --- -->
 
-## Real-World Example: Complete Pipeline
+<!-- ## Real-World Example: Complete Pipeline -->
 
-```makefile
-.PHONY: all clean
+<!-- ```makefile -->
+<!-- .PHONY: all clean -->
 
-# Variables
-R = Rscript
-DATA = data/iris.csv
-CLEAN_DATA = data/iris_clean.csv
-RESULTS = results/model_summary.txt
-FIGURE = figures/iris_plot.png
+<!-- # Variables -->
+<!-- R = Rscript -->
+<!-- DATA = data/iris.csv -->
+<!-- CLEAN_DATA = data/iris_clean.csv -->
+<!-- RESULTS = results/model_summary.txt -->
+<!-- FIGURE = figures/iris_plot.png -->
 
-# Default target
-all: $(FIGURE)
+<!-- # Default target -->
+<!-- all: $(FIGURE) -->
 
-# Pipeline
-$(DATA):
-	mkdir -p data
-	wget -O $(DATA) \
-	  https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv
+<!-- # Pipeline -->
+<!-- $(DATA): -->
+<!-- 	mkdir -p data -->
+<!-- 	wget -O $(DATA) \ -->
+<!-- 	  https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv -->
 
-$(CLEAN_DATA): $(DATA) scripts/clean.R
-	$(R) scripts/clean.R
+<!-- $(CLEAN_DATA): $(DATA) scripts/clean.R -->
+<!-- 	$(R) scripts/clean.R -->
 
-$(RESULTS): $(CLEAN_DATA) scripts/analyze.R
-	mkdir -p results
-	$(R) scripts/analyze.R
+<!-- $(RESULTS): $(CLEAN_DATA) scripts/analyze.R -->
+<!-- 	mkdir -p results -->
+<!-- 	$(R) scripts/analyze.R -->
 
-$(FIGURE): $(RESULTS) scripts/plot.R
-	mkdir -p figures
-	$(R) scripts/plot.R
+<!-- $(FIGURE): $(RESULTS) scripts/plot.R -->
+<!-- 	mkdir -p figures -->
+<!-- 	$(R) scripts/plot.R -->
 
-# Clean up
-clean:
-	rm -rf data results figures
-```
+<!-- # Clean up -->
+<!-- clean: -->
+<!-- 	rm -rf data results figures -->
+<!-- ``` -->
 
----
+<!-- --- -->
 
-## Parallel Execution
+<!-- ## Parallel Execution -->
 
-Make can run independent tasks simultaneously:
+<!-- Make can run independent tasks simultaneously: -->
 
-```makefile
-all: figure1.png figure2.png figure3.png
+<!-- ```makefile -->
+<!-- all: figure1.png figure2.png figure3.png -->
 
-figure1.png: data.csv script1.R
-	Rscript script1.R
+<!-- figure1.png: data.csv script1.R -->
+<!-- 	Rscript script1.R -->
 
-figure2.png: data.csv script2.R
-	Rscript script2.R
+<!-- figure2.png: data.csv script2.R -->
+<!-- 	Rscript script2.R -->
 
-figure3.png: data.csv script3.R
-	Rscript script3.R
-```
+<!-- figure3.png: data.csv script3.R -->
+<!-- 	Rscript script3.R -->
+<!-- ``` -->
 
-**Run in parallel:**
+<!-- **Run in parallel:** -->
 
-```bash
-make -j 3 all  # Run 3 jobs simultaneously
-```
+<!-- ```bash -->
+<!-- make -j 3 all  # Run 3 jobs simultaneously -->
+<!-- ``` -->
 
----
+<!-- --- -->
 
-## When to Use Make vs R Scripts
+<!-- ## When to Use Make vs R Scripts -->
 
-**Use Make when:**
+<!-- **Use Make when:** -->
 
-- Multiple steps in your pipeline
-- Different tools (R, Python, bash)
-- Long-running computations
-- Need to track dependencies
+<!-- - Multiple steps in your pipeline -->
+<!-- - Different tools (R, Python, bash) -->
+<!-- - Long-running computations -->
+<!-- - Need to track dependencies -->
 
-. . .
+<!-- . . . -->
 
-**Stick with R scripts when:**
+<!-- **Stick with R scripts when:** -->
 
-- Everything fits in one R script
-- Very simple analysis
-- No intermediate files
+<!-- - Everything fits in one R script -->
+<!-- - Very simple analysis -->
+<!-- - No intermediate files -->
 
----
+<!-- --- -->
 
-## Best Practices
+<!-- ## Best Practices -->
 
-1. **One Makefile per project** in the root directory
-2. **Use meaningful target names** (not `temp1.csv`)
-3. **Comment your Makefile** to explain steps
-4. **Use variables** for paths and commands
-5. **Add `.PHONY`** for non-file targets
-6. **Test incrementally** as you build your Makefile
+<!-- 1. **One Makefile per project** in the root directory -->
+<!-- 2. **Use meaningful target names** (not `temp1.csv`) -->
+<!-- 3. **Comment your Makefile** to explain steps -->
+<!-- 4. **Use variables** for paths and commands -->
+<!-- 5. **Add `.PHONY`** for non-file targets -->
+<!-- 6. **Test incrementally** as you build your Makefile -->
 
----
+<!-- --- -->
 
-## Common Pitfalls
+<!-- ## Common Pitfalls -->
 
-❌ **Using spaces instead of tabs**
+<!-- ❌ **Using spaces instead of tabs** -->
 
-```makefile
-target: dependency
-    command  # WRONG! This is spaces
-	command  # RIGHT! This is a tab
-```
+<!-- ```makefile -->
+<!-- target: dependency -->
+<!--     command  # WRONG! This is spaces -->
+<!-- 	command  # RIGHT! This is a tab -->
+<!-- ``` -->
 
-. . .
+<!-- . . . -->
 
-❌ **Circular dependencies**
+<!-- ❌ **Circular dependencies** -->
 
-```makefile
-a.txt: b.txt
-	cat b.txt > a.txt
+<!-- ```makefile -->
+<!-- a.txt: b.txt -->
+<!-- 	cat b.txt > a.txt -->
 
-b.txt: a.txt  # CIRCULAR!
-	cat a.txt > b.txt
-```
+<!-- b.txt: a.txt  # CIRCULAR! -->
+<!-- 	cat a.txt > b.txt -->
+<!-- ``` -->
 
----
+<!-- --- -->
 
-## Debugging Tips
+<!-- ## Debugging Tips -->
 
-**Check what Make would do:**
+<!-- **Check what Make would do:** -->
 
-```bash
-make -n target  # Dry run, shows commands without executing
-```
+<!-- ```bash -->
+<!-- make -n target  # Dry run, shows commands without executing -->
+<!-- ``` -->
 
-. . .
+<!-- . . . -->
 
-**See why Make rebuilds:**
+<!-- **See why Make rebuilds:** -->
 
-```bash
-make -d target  # Debug mode, verbose output
-```
+<!-- ```bash -->
+<!-- make -d target  # Debug mode, verbose output -->
+<!-- ``` -->
 
-. . .
+<!-- . . . -->
 
-**Force rebuild:**
+<!-- **Force rebuild:** -->
 
-```bash
-make -B target  # Rebuild regardless of timestamps
-```
+<!-- ```bash -->
+<!-- make -B target  # Rebuild regardless of timestamps -->
+<!-- ``` -->
 
----
+<!-- --- -->
 
-## Example: Why Make > Shell Script
+<!-- ## Example: Why Make > Shell Script -->
 
-**Shell script approach:**
+<!-- **Shell script approach:** -->
 
-```bash
-#!/bin/bash
-Rscript download.R     # Always runs (even if data unchanged)
-Rscript clean.R        # Always runs
-Rscript analyze.R      # Always runs
-Rscript plot.R         # Always runs
-# Takes 30 minutes every time!
-```
+<!-- ```bash -->
+<!-- #!/bin/bash -->
+<!-- Rscript download.R     # Always runs (even if data unchanged) -->
+<!-- Rscript clean.R        # Always runs -->
+<!-- Rscript analyze.R      # Always runs -->
+<!-- Rscript plot.R         # Always runs -->
+<!-- # Takes 30 minutes every time! -->
+<!-- ``` -->
 
-. . .
+<!-- . . . -->
 
-**Makefile approach:**
+<!-- **Makefile approach:** -->
 
-```bash
-make all
-# First run: 30 minutes
-# Edit plot.R and re-run: 10 seconds (only reruns plotting!)
-# No changes: instant (nothing to do!)
-```
+<!-- ```bash -->
+<!-- make all -->
+<!-- # First run: 30 minutes -->
+<!-- # Edit plot.R and re-run: 10 seconds (only reruns plotting!) -->
+<!-- # No changes: instant (nothing to do!) -->
+<!-- ``` -->
 
----
+<!-- --- -->
 
-## Hands-On Exercise (Optional)
+<!-- ## Hands-On Exercise (Optional) -->
 
-**Try this yourself:**
+<!-- **Try this yourself:** -->
 
-1. Create a simple `Makefile`
-2. Add a target that creates a text file
-3. Add a target that depends on that file
-4. Run `make` and observe behavior
-5. Touch a file and run `make` again
+<!-- 1. Create a simple `Makefile` -->
+<!-- 2. Add a target that creates a text file -->
+<!-- 3. Add a target that depends on that file -->
+<!-- 4. Run `make` and observe behavior -->
+<!-- 5. Touch a file and run `make` again -->
 
-**Example starter:**
+<!-- **Example starter:** -->
 
-```makefile
-hello.txt:
-	echo "Hello, Make!" > hello.txt
+<!-- ```makefile -->
+<!-- hello.txt: -->
+<!-- 	echo "Hello, Make!" > hello.txt -->
 
-goodbye.txt: hello.txt
-	cat hello.txt | sed 's/Hello/Goodbye/' > goodbye.txt
-```
+<!-- goodbye.txt: hello.txt -->
+<!-- 	cat hello.txt | sed 's/Hello/Goodbye/' > goodbye.txt -->
+<!-- ``` -->
 
----
+<!-- --- -->
 
-## Advanced Topics (For Later)
+<!-- ## Advanced Topics (For Later) -->
 
-Once comfortable with basics:
+<!-- Once comfortable with basics: -->
 
-- **Automatic variables** (`$@`, `$<`, `$^`)
-- **Functions** (`wildcard`, `patsubst`)
-- **Conditional execution** (`ifeq`, `ifdef`)
-- **Including other Makefiles**
-- **Integration with version control**
-- **Make for reports** (Quarto, R Markdown)
+<!-- - **Automatic variables** (`$@`, `$<`, `$^`) -->
+<!-- - **Functions** (`wildcard`, `patsubst`) -->
+<!-- - **Conditional execution** (`ifeq`, `ifdef`) -->
+<!-- - **Including other Makefiles** -->
+<!-- - **Integration with version control** -->
+<!-- - **Make for reports** (Quarto, R Markdown) -->
 
----
+<!-- --- -->
 
-## Resources
+<!-- ## Resources -->
 
-**Documentation:**
+<!-- **Documentation:** -->
 
-- GNU Make Manual: <https://www.gnu.org/software/make/manual/>
-- Make for reproducible research: <https://makefiletutorial.com/>
+<!-- - GNU Make Manual: <https://www.gnu.org/software/make/manual/> -->
+<!-- - Make for reproducible research: <https://makefiletutorial.com/> -->
 
-. . .
+<!-- . . . -->
 
-**Tutorials:**
+<!-- **Tutorials:** -->
 
-- Software Carpentry: Make for Data Analysis
-- Minimal Make by Karl Broman
+<!-- - Software Carpentry: Make for Data Analysis -->
+<!-- - Minimal Make by Karl Broman -->
 
-. . .
+<!-- . . . -->
 
-**Getting Help:**
+<!-- **Getting Help:** -->
 
-- `man make` (in terminal)
-- Stack Overflow: `[makefile]` tag
+<!-- - `man make` (in terminal) -->
+<!-- - Stack Overflow: `[makefile]` tag -->
 
----
+<!-- --- -->
 
-## Key Takeaways
+<!-- ## Key Takeaways -->
 
-✅ **Make tracks dependencies** between files
+<!-- ✅ **Make tracks dependencies** between files -->
 
-. . .
+<!-- . . . -->
 
-✅ **Only rebuilds what's necessary** (saves time!)
+<!-- ✅ **Only rebuilds what's necessary** (saves time!) -->
 
-. . .
+<!-- . . . -->
 
-✅ **Documents your workflow** in one place
+<!-- ✅ **Documents your workflow** in one place -->
 
-. . .
+<!-- . . . -->
 
-✅ **Works with any tools** (R, Python, bash, etc.)
+<!-- ✅ **Works with any tools** (R, Python, bash, etc.) -->
 
-. . .
+<!-- . . . -->
 
-✅ **Essential for reproducible research**
+<!-- ✅ **Essential for reproducible research** -->
 
----
+<!-- --- -->
 
-## Your Next Steps
+<!-- ## Your Next Steps -->
 
-1. **Start small**: Convert one script to a Makefile
-2. **Build incrementally**: Add one target at a time
-3. **Test often**: Run `make` frequently
-4. **Read the manual**: When you need advanced features
-5. **Share your Makefiles**: Help others reproduce your work!
+<!-- 1. **Start small**: Convert one script to a Makefile -->
+<!-- 2. **Build incrementally**: Add one target at a time -->
+<!-- 3. **Test often**: Run `make` frequently -->
+<!-- 4. **Read the manual**: When you need advanced features -->
+<!-- 5. **Share your Makefiles**: Help others reproduce your work! -->
 
----
+<!-- --- -->
 
-## Questions? 🤔
+<!-- ## Questions? 🤔 -->
 
-**Thank you for attending!**
+<!-- **Thank you for attending!** -->
 
-Remember: Reproducible research benefits everyone!
+<!-- Remember: Reproducible research benefits everyone! -->
 
-. . .
+<!-- . . . -->
 
-**Makefile = Your research lab notebook** 📓
+<!-- **Makefile = Your research lab notebook** 📓 -->
 
-. . .
+<!-- . . . -->
 
-Start using Make in your next project! 🚀
+<!-- Start using Make in your next project! 🚀 -->
 
 
-## Optional: Installing GNU Make on Windows 
+<!-- ## Make vs Shell Scripts -->
 
-**Option 1: Using Chocolatey (Recommended)**
+<!-- **Makefile approach:** -->
 
-1. **Install Chocolatey** (if not already installed):
-   - Right-click Start menu → "Windows PowerShell (Admin)"
-   - Visit: <https://chocolatey.org/install>
-   - Copy and run the installation command from the website
+<!-- ```makefile -->
+<!-- results.csv: raw_data.csv clean.R -->
+<!-- 	Rscript clean.R -->
 
-2. **Install GNU Make:**
-   ```powershell
-   choco install make
-   ```
+<!-- plots/figure1.png: results.csv plot.R -->
+<!-- 	Rscript plot.R -->
+<!-- ``` -->
 
-3. **Verify installation:**
-   ```bash
-   make --version
-   # Should show: GNU Make 4.x
-   ```
+<!-- **Benefits:** -->
 
-. . .
+<!-- - Only re-runs when inputs change -->
+<!-- - Automatic dependency resolution -->
+<!-- - Self-documenting workflow -->
+<!-- - Can run independent tasks in parallel -->
 
-**Option 2: Using Git for Windows (Built-in)**
 
-- Download and install **Git for Windows**: <https://gitforwindows.org/>
-- Make is included! Access via **Git Bash** terminal
-- Look for "Git Bash" in your Start menu
 
-. . .
+<!-- ## Make vs Shell Scripts -->
 
-**Troubleshooting:**
-- If `make` command not found → Restart terminal/PowerShell
-- Use Git Bash instead of Command Prompt for Option 2
+<!-- **Shell script approach:** -->
 
-## Optional: Installing GNU Make on macOS
+<!-- ```bash -->
+<!-- #!/bin/bash -->
+<!-- # run_all.sh -->
+<!-- Rscript download.R -->
+<!-- Rscript clean.R -->
+<!-- Rscript analyze.R -->
+<!-- Rscript plot.R -->
+<!-- ``` -->
 
-**Option 1: Using Homebrew (Recommended)**
+<!-- **Limitations:** -->
 
-1. **Install Homebrew** (if not already installed):
-   - Open **Terminal** (Applications → Utilities → Terminal)
-   - Visit: <https://brew.sh/>
-   - Copy and run the installation command:
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
+<!-- - Runs everything every time -->
+<!-- - No dependency tracking -->
+<!-- - Manual ordering -->
+<!-- - No parallelization -->
 
-2. **Install GNU Make:**
-   ```bash
-   brew install make
-   ```
 
-3. **Verify installation:**
-   ```bash
-   make --version
-   # Should show: GNU Make 4.x
-   ```
 
-. . .
 
-**Option 2: Xcode Command Line Tools (Built-in)**
 
-GNU Make comes with Xcode Command Line Tools:
-```bash
-xcode-select --install
-```
-Click "Install" in the popup window
 
-. . .
+<!-- ## Optional: Installing GNU Make on Windows  -->
 
-**Troubleshooting:**
-- If `make --version` shows older version → Use `brew install make`
-- Homebrew installs as `gmake` on some systems → Create alias or use `gmake`
+<!-- **Option 1: Using Chocolatey (Recommended)** -->
+
+<!-- 1. **Install Chocolatey** (if not already installed): -->
+<!--    - Right-click Start menu → "Windows PowerShell (Admin)" -->
+<!--    - Visit: <https://chocolatey.org/install> -->
+<!--    - Copy and run the installation command from the website -->
+
+<!-- 2. **Install GNU Make:** -->
+<!--    ```powershell -->
+<!--    choco install make -->
+<!--    ``` -->
+
+<!-- 3. **Verify installation:** -->
+<!--    ```bash -->
+<!--    make --version -->
+<!--    # Should show: GNU Make 4.x -->
+<!--    ``` -->
+
+<!-- . . . -->
+
+<!-- **Option 2: Using Git for Windows (Built-in)** -->
+
+<!-- - Download and install **Git for Windows**: <https://gitforwindows.org/> -->
+<!-- - Make is included! Access via **Git Bash** terminal -->
+<!-- - Look for "Git Bash" in your Start menu -->
+
+<!-- . . . -->
+
+<!-- **Troubleshooting:** -->
+<!-- - If `make` command not found → Restart terminal/PowerShell -->
+<!-- - Use Git Bash instead of Command Prompt for Option 2 -->
+
+<!-- ## Optional: Installing GNU Make on macOS -->
+
+<!-- **Option 1: Using Homebrew (Recommended)** -->
+
+<!-- 1. **Install Homebrew** (if not already installed): -->
+<!--    - Open **Terminal** (Applications → Utilities → Terminal) -->
+<!--    - Visit: <https://brew.sh/> -->
+<!--    - Copy and run the installation command: -->
+<!--    ```bash -->
+<!--    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" -->
+<!--    ``` -->
+
+<!-- 2. **Install GNU Make:** -->
+<!--    ```bash -->
+<!--    brew install make -->
+<!--    ``` -->
+
+<!-- 3. **Verify installation:** -->
+<!--    ```bash -->
+<!--    make --version -->
+<!--    # Should show: GNU Make 4.x -->
+<!--    ``` -->
+
+<!-- . . . -->
+
+<!-- **Option 2: Xcode Command Line Tools (Built-in)** -->
+
+<!-- GNU Make comes with Xcode Command Line Tools: -->
+<!-- ```bash -->
+<!-- xcode-select --install -->
+<!-- ``` -->
+<!-- Click "Install" in the popup window -->
+
+<!-- . . . -->
+
+<!-- **Troubleshooting:** -->
+<!-- - If `make --version` shows older version → Use `brew install make` -->
+<!-- - Homebrew installs as `gmake` on some systems → Create alias or use `gmake` -->
