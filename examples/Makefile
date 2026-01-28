@@ -56,8 +56,8 @@ clean:
 
 # Basic Makefile synxtax example
 mean_normal_distribution.txt: scripts/sample_from_normal_distribution.R
-  Rscript scripts/sample_from_normal_distribution.R
-  @echo "Generated mean_normal_distribution.txt"
+	Rscript scripts/sample_from_normal_distribution.R
+	@echo "Generated mean_normal_distribution.txt"
 
 # Convenience target to run only the above example
 sample_mean: mean_normal_distribution.txt
