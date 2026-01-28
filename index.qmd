@@ -24,8 +24,6 @@ bibliography: references.bib
 
 ## Objective
 
-**Today's Goal:**
-
 Learn how to use GNU Make to automate your research workflows
 
 . . .
@@ -41,27 +39,80 @@ Learn how to use GNU Make to automate your research workflows
 - How Make tracks dependencies automatically
 - Build a real data analysis pipeline
 
-## Setup
+## Setup GitHub Repo
+
+If you wish to follow the hands-on tutorial, you need a **GitHub** account
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+![](assets/github_setup.png)
+
+:::
+
+::: {.column width="50%"}
+
+- Open the tutorial [repository](https://github.com/tonyliang19/ubc_biof_stat_workshop-gnu_make)
+- Click on "Use this template" , "Create a new repository"
+- Enter a name you desired of the repository copy
+- Click on "Create repository"
+
+:::
+
+::::
+
+## Setup Posit Cloud {.smaller}
 
 Using [posit cloud](https://posit.cloud/) (Rstudio server on web)
 
+:::: {.columns}
+
+::: {.column width="50%"}
+
 ![](assets/posit_login.png)
+
+:::
+
+::: {.column width="50%"}
+
+<br>
 
 - Enter to this [website](https://login.posit.cloud/register?product=cloud&redirect=%2Foauth%2Fauthorize%3Fredirect_uri%3Dhttps%253A%252F%252Fposit.cloud%252Flogin%26client_id%3Dposit-cloud%26response_type%3Dcode%26show_auth%3D0)
 - Click on "Sign up with GitHub"
 - Prompt to login with your github credentials
 
-## Setup
+:::
+
+::::
+
+## Setup Posit Cloud
+
+
+:::: {.columns}
+
+::: {.column width="46%"}
+
 
 ![](assets/posit_cloud_landing.png)
-- After login, landing in this page
+:::
+
+::: {.column width="54%"}
+
 - Click on "New Project" 
 - Click on "New Project from Git Repository"
 - Paste in the your github url
+- Run `install.packages(c("tidyverse", "patchwork")` in the new workspace
+
+:::
+
+::::
+
+. . .
 
 ::: {.callout-note}
 
-The github URL should be of your repository with `https://github.com/your_user_name/...git
+The github URL should be of your repository with `https://github.com/your_user_name/repo_name.git`
 
 :::
 
