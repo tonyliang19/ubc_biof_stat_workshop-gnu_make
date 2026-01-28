@@ -1,37 +1,47 @@
 #!/usr/bin/env Rscript
-# analyze.R - Perform statistical analysis on iris dataset
+# analyze.R - Perform statistical analysis on iris dataset (tidyverse style)
+
+suppressPackageStartupMessages(library(dplyr))
+library(readr)
+library(broom)
 
 # Read cleaned data
-iris_data <- read.csv("data/iris_clean.csv", stringsAsFactors = FALSE)
+iris_data <- read_csv("data/iris_clean.csv")
 
-# Perform analysis
 # 1. Summary statistics by species
-summary_stats <- aggregate(
-  cbind(sepal_length, sepal_width, petal_length, petal_width) ~ species,
-  data = iris_data,
-  FUN = function(x) c(mean = mean(x), sd = sd(x))
-)
+summary_stats <- iris_data %>%
+  group_by(species) %>%
+  summarise(
+    across(c(sepal_length, sepal_width, petal_length, petal_width),
+           list(mean = mean, sd = sd),
+           .names = "{.col}_{.fn}")
+  )
 
 # 2. Fit a simple linear model
 model <- lm(sepal_length ~ petal_length + species, data = iris_data)
+model_tidy <- tidy(model)
+model_glance <- glance(model)
 
 # Create output file
 sink("results/model_summary.txt")
 
-cat(paste(rep("=", 60), collapse = ""), "\n")
+cat(strrep("=", 60), "\n")
 cat("IRIS DATASET ANALYSIS\n")
-cat(paste(rep("=", 60), collapse = ""), "\n\n")
+cat(strrep("=", 60), "\n\n")
 
 cat("Summary Statistics by Species:\n")
-cat(paste(rep("-", 60), collapse = ""), "\n")
+cat(strrep("-", 60), "\n")
 print(summary_stats)
 
 cat("\n\nLinear Model Results:\n")
-cat(paste(rep("-", 60), collapse = ""), "\n")
+cat(strrep("-", 60), "\n")
 cat("Model: sepal_length ~ petal_length + species\n\n")
-print(summary(model))
+print(model_tidy)
 
-cat("\n", paste(rep("=", 60), collapse = ""), "\n")
+cat("\nModel Fit Statistics:\n")
+print(model_glance)
+
+cat("\n", strrep("=", 60), "\n")
 cat("Analysis complete!\n")
 
 sink()

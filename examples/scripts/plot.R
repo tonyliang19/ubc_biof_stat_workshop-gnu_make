@@ -1,45 +1,66 @@
 #!/usr/bin/env Rscript
-# plot.R - Create visualizations from iris analysis
+# plot.R - Create visualizations from iris analysis (tidyverse style)
+
+library(ggplot2)
+library(patchwork)
+library(readr)
+library(magrittr)
 
 # Read cleaned data
-iris_data <- read.csv("data/iris_clean.csv", stringsAsFactors = FALSE)
+iris_data <- read_csv("data/iris_clean.csv", show_col_types = FALSE)
 
-# Create a nice plot
-png("figures/iris_plot.png", width = 800, height = 600, res = 100)
 
-# Set up plotting parameters
-par(mfrow = c(2, 2), mar = c(4, 4, 2, 1))
 
 # Plot 1: Sepal Length vs Petal Length
-plot(iris_data$petal_length, iris_data$sepal_length,
-     col = as.factor(iris_data$species),
-     pch = 19,
-     xlab = "Petal Length (cm)",
-     ylab = "Sepal Length (cm)",
-     main = "Sepal vs Petal Length")
-legend("topleft", legend = unique(iris_data$species),
-       col = 1:3, pch = 19, cex = 0.8)
+p1 <- ggplot(iris_data, aes(x = petal_length, y = sepal_length, color = species)) +
+  geom_point(size = 3) +
+  labs(
+    x = "Petal Length (cm)",
+    y = "Sepal Length (cm)",
+    title = "Sepal vs Petal Length"
+  ) +
+  theme_minimal()
 
 # Plot 2: Sepal Width vs Petal Width
-plot(iris_data$petal_width, iris_data$sepal_width,
-     col = as.factor(iris_data$species),
-     pch = 19,
-     xlab = "Petal Width (cm)",
-     ylab = "Sepal Width (cm)",
-     main = "Sepal vs Petal Width")
+p2 <- ggplot(iris_data, aes(x = petal_width, y = sepal_width, color = species)) +
+  geom_point(size = 3) +
+  labs(
+    x = "Petal Width (cm)",
+    y = "Sepal Width (cm)",
+    title = "Sepal vs Petal Width"
+  ) +
+  theme_minimal()
 
 # Plot 3: Distribution of Sepal Length by Species
-boxplot(sepal_length ~ species, data = iris_data,
-        col = c("lightblue", "lightgreen", "lightcoral"),
-        main = "Sepal Length by Species",
-        ylab = "Sepal Length (cm)")
+p3 <- ggplot(iris_data, aes(x = species, y = sepal_length, fill = species)) +
+  geom_boxplot() +
+  labs(
+    x = "Species",
+    y = "Sepal Length (cm)",
+    title = "Sepal Length by Species"
+  ) +
+  scale_fill_manual(values = c("lightblue", "lightgreen", "lightcoral")) +
+  theme_minimal() +
+  theme(legend.position = "none")
 
 # Plot 4: Distribution of Petal Length by Species
-boxplot(petal_length ~ species, data = iris_data,
-        col = c("lightblue", "lightgreen", "lightcoral"),
-        main = "Petal Length by Species",
-        ylab = "Petal Length (cm)")
+p4 <- ggplot(iris_data, aes(x = species, y = petal_length, fill = species)) +
+  geom_boxplot() +
+  labs(
+    x = "Species",
+    y = "Petal Length (cm)",
+    title = "Petal Length by Species"
+  ) +
+  scale_fill_manual(values = c("lightblue", "lightgreen", "lightcoral")) +
+  theme_minimal() +
+  theme(legend.position = "none")
 
-dev.off()
+# Save all plots in a 2x2 grid
+joined_plot <- (p1 | p2) / (p3 | p4) +
+  plot_layout(guides = "collect")  # Collect all legends into one
+
+
+ggsave("figures/iris_plot.png", joined_plot, width = 12, height = 8, dpi = 150)
 
 cat("Plot saved to figures/iris_plot.png\n")
+
