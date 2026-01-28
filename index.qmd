@@ -13,6 +13,7 @@ format:
     controls: true
     progress: true
     code-line-numbers: false
+    center-title-slide: true
     output-file: index.html # If naming other files , gh complains
 engine: knitr
 knitr:
@@ -21,21 +22,25 @@ knitr:
 bibliography: references.bib
 ---
 
+
+## {#title-page data-menu-title="Title" data-vertical-align="center"}
+
+::: {.center2}
+
 #### UBC Bioinformatics and Statistics Workshop Series
 
 ## GNU Make for Reproducible Research
 
-Presenter: Tony Liang | tony.liang@hli.ubc.ca
-
+Presenter: Tony Liang | tony.liang@hli.ubc.ca  
 January 28, 2026
 
-<br>
-<br>
-
-![](assets/ubc_logos.png){out-width="80%"}
+![](assets/ubc_logos.png){.logo}
+:::
 
 
 ---
+
+
 
 ## Objective
 

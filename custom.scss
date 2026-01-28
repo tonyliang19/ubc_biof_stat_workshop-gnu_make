@@ -52,3 +52,17 @@ $presentation-font-size-root: 42px;
 .smaller {
   font-size: 0.5em;
 }
+
+.center2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.center2 .logo {
+  width: 650px;      // absolute size
+  max-width: none;   // override reveal
+  max-height: none;
+}
