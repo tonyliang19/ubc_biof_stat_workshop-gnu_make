@@ -34,7 +34,7 @@ bibliography: references.bib
 Presenter: Tony Liang | tony.liang@hli.ubc.ca  
 January 28, 2026
 
-![](assets/ubc_logos.png){.logo}
+![](assets/ubc_logos.png)
 :::
 
 

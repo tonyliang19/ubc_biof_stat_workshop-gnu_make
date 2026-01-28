@@ -53,16 +53,55 @@ $presentation-font-size-root: 42px;
   font-size: 0.5em;
 }
 
+/* custom.scss */
+
 .center2 {
+  /* 1. Create a full-height Flex column */
+  height: 90vh !important; /* Uses 90% of screen height */
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
+  text-align: center;
+  
+  /* 2. Custom Typography */
+  h2 {
+    font-size: 2.5em !important;
+    margin-bottom: 0.5em !important;
+  }
 
-.center2 .logo {
-  width: 650px;      // absolute size
-  max-width: none;   // override reveal
-  max-height: none;
+  h4 {
+    font-size: 1.3em !important;
+    opacity: 0.8;
+  }
+  
+  /* 3. THE MAGIC: "Springs" to handle layout without overlap */
+  
+  /* Spring #1: Pushes the text block down from the top */
+  & > *:first-child {
+    margin-top: auto;
+  }
+
+  /* Spring #2: Pushes the logo down to the bottom */
+  /* This targets the paragraph containing the image */
+  p:last-child {
+    margin-top: auto; 
+    margin-bottom: 0; /* Sticks strictly to bottom */
+    
+    /* Ensure the image container doesn't shrink if text is long */
+    flex-shrink: 0; 
+  }
+
+  /* 4. Logo Styling */
+  img {
+    width: 300px;
+    max-width: 60vw; /* Responsive limiter */
+    display: block;  /* Removes inline spacing */
+    margin: 0 auto;  /* Horizontal centering */
+  }
+
+  /* 5. Handle <br> tags properly in flex containers */
+  br {
+    display: block;
+    content: "";
+    margin-top: 20px; 
+  }
 }
