@@ -1,16 +1,15 @@
 ---
-title: "GNU Make for Reproducible Research"
-subtitle: "Automating and Documenting Data Analysis Pipelines"
-author: "UBC BIOF Statistics Workshop"
 format:
   revealjs:
-    theme: simple
+    theme: [default, custom.scss]
     slide-number: true
     transition: slide
-#    navigation-mode: linear
+    footer: "GNU Make Workshop"
     embed-resources: true
-    width: 1280
-    height: 720
+    width: 1600
+    height: 900
+    link-external-icon: true
+    link-external-newwindow: true
     controls: true
     progress: true
     code-line-numbers: false
@@ -20,6 +19,22 @@ knitr:
   opts_chunk:
     eval: false
 bibliography: references.bib
+---
+
+#### UBC Bioinformatics and Statistics Workshop Series
+
+## GNU Make for Reproducible Research
+
+Presenter: Tony Liang | tony.liang@hli.ubc.ca
+
+January 28, 2026
+
+<br>
+<br>
+
+![](assets/ubc_logos.png){out-width="80%"}
+
+
 ---
 
 ## Objective
@@ -99,7 +114,6 @@ Using [posit cloud](https://posit.cloud/) (Rstudio server on web)
 
 ::: {.column width="54%"}
 
-- Click on "New Project" 
 - Click on "New Project from Git Repository"
 - Paste in the your github url
 - Run `install.packages(c("tidyverse", "patchwork")` in the new workspace
@@ -948,7 +962,7 @@ figures/iris_plot.png: results/statistics.txt scripts/make_figures.R
 ## Testing Your Pipeline
 
 ```bash
-make figures/plot1.png
+make figures/iris_plot.png
 ```
 
 

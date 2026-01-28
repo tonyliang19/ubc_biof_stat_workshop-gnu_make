@@ -1,0 +1,54 @@
+/*-- scss:defaults --*/
+
+/* Custom theme for UBC Workshop slides */
+
+$presentation-heading-color: #002145; /* UBC blue */
+$link-color: #0055B7; /* UBC light blue */
+
+// Main colors
+$secondary: #e98a15;
+$tertiary: #2a76dd;
+$quaternary: #ff170d;
+$fifth-color: #f9c80e;
+
+
+// Headings
+$headingLineHeight: 1.2;
+$headingLetterSpacing: normal;
+
+// Heading sizes
+$heading1Size: 3.00em;
+$heading2Size: 2em; //2.11em;
+$heading3Size: 1.55em;
+$heading4Size: 1.00em;
+
+$presentation-font-size-root: 42px; 
+
+/*-- scss:rules --*/
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  color: $presentation-heading-color;
+}
+
+.reveal a {
+  color: $link-color;
+}
+
+.reveal pre {
+  font-size: 0.75em;
+}
+
+.reveal code {
+  font-size: 0.85em;
+}
+
+.secondary {color: $secondary;}
+.tertiary {color: $tertiary;}
+.quaternary {color: $quaternary;}
+.fifth-color {color: $fifth-color;}
+
+.smaller {
+  font-size: 0.5em;
+}
