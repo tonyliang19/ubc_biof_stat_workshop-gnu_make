@@ -17,6 +17,7 @@ help:
 	@echo "  clean   - Remove all generated files"
 	@echo "  help    - Show this help message"
 
+
 all: $(FIGURES_DIR)/iris_plot.png
 # Download raw data
 $(DATA_DIR)/iris.csv:
@@ -49,3 +50,15 @@ clean:
 	rm -rf $(DATA_DIR)/iris_clean.csv
 	rm -rf $(RESULTS_DIR)
 	rm -rf $(FIGURES_DIR)
+
+# ============================================================
+# TEMPORARY SECTION TO STEP BY STEP
+
+# Basic Makefile synxtax example
+mean_normal_distribution.txt: scripts/sample_from_normal_distribution.R
+	Rscript scripts/sample_from_normal_distribution.R
+	@echo "Generated mean_normal_distribution.txt"
+
+# Convenience target to run only the above example
+sample_mean: mean_normal_distribution.txt
+# ============================================================
