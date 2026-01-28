@@ -127,7 +127,7 @@ You have a multi-step data analysis:
 # Step 1: Download data
 Rscript download_data.R
 
-# Step 2: Clean the data  
+# Step 2: Clean the data
 Rscript clean_data.R
 
 # Step 3: Run analysis
@@ -153,9 +153,9 @@ You realize you need to fix a bug in `analyze.R`
 
 . . .
 
-A. Just `analyze.R`  
-B. `analyze.R` and `make_figures.R`  
-C. All four scripts  
+A. Just `analyze.R`
+B. `analyze.R` and `make_figures.R`
+C. All four scripts
 D. Not sure... better run them all!
 
 ---
@@ -172,8 +172,8 @@ D. Not sure... better run them all!
 
 **But how do you remember this?**
 
-❌ Keep dependencies in your head (error-prone!)  
-❌ Re-run everything every time (slow!)  
+❌ Keep dependencies in your head (error-prone!)
+❌ Re-run everything every time (slow!)
 ❌ Write them down somewhere (tedious!)
 
 ---
@@ -216,7 +216,7 @@ Originally created for compiling software, but perfect for data pipelines!
 
 . . .
 
-**Think of Make as:**  
+**Think of Make as:**
 A smart assistant that remembers which scripts depend on which files
 
 ---
@@ -229,7 +229,7 @@ A smart assistant that remembers which scripts depend on which files
 #!/bin/bash
 # run_all.sh - runs EVERYTHING every time
 Rscript download.R   # 5 minutes
-Rscript clean.R      # 10 minutes  
+Rscript clean.R      # 10 minutes
 Rscript analyze.R    # 30 minutes
 Rscript plot.R       # 2 minutes
 # Total: 47 minutes every run!
@@ -254,7 +254,7 @@ Instead of keeping track in your head:
 
 **Makefile explicitly states:**
 
-- `clean_data.csv` needs `raw_data.csv` 
+- `clean_data.csv` needs `raw_data.csv`
 - `results.txt` needs `clean_data.csv`
 - `plot.png` needs `results.txt`
 
@@ -262,7 +262,7 @@ Instead of keeping track in your head:
 
 If you change `raw_data.csv`, Make knows to rebuild:
 - `clean_data.csv` (directly depends on raw data)
-- `results.txt` (depends on clean data)  
+- `results.txt` (depends on clean data)
 - `plot.png` (depends on results)
 
 . . .
@@ -309,19 +309,19 @@ When you run `make clean_data.csv`:
 
 **Make asks three questions:**
 
-1. Does `clean_data.csv` exist?  
+1. Does `clean_data.csv` exist?
    - No → Run the command
    - Yes → Go to question 2
 
 . . .
 
-2. Does `raw_data.csv` exist?  
+2. Does `raw_data.csv` exist?
    - No → Error: can't build target
    - Yes → Go to question 3
 
 . . .
 
-3. Is `raw_data.csv` newer than `clean_data.csv`?  
+3. Is `raw_data.csv` newer than `clean_data.csv`?
    - Yes → Run the command (rebuild needed)
    - No → Skip! Target is up to date
 
@@ -337,7 +337,7 @@ When you run `make clean_data.csv`:
 
 1. Download iris dataset from web
 2. Clean and filter the data
-3. Run statistical analysis  
+3. Run statistical analysis
 4. Generate visualization
 
 . . .
@@ -472,7 +472,7 @@ data/raw_data.csv:
 	wget -O data/raw_data.csv \
 	  https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv
 
-# Clean data  
+# Clean data
 data/clean_data.csv: data/raw_data.csv scripts/clean.R
 	Rscript scripts/clean.R
 
@@ -533,7 +533,7 @@ all: figures/plot.png
 
 clean:
 	rm -f data/clean_data.csv
-	rm -f results/statistics.txt  
+	rm -f results/statistics.txt
 	rm -f figures/plot.png
 ```
 
@@ -552,7 +552,7 @@ make clean  # Remove generated files, start fresh
 
 . . .
 
-**Why `.PHONY`?**  
+**Why `.PHONY`?**
 Without it, if a file named "clean" exists, `make clean` won't run!
 
 ---
@@ -564,11 +564,11 @@ Without it, if a file named "clean" exists, `make clean` won't run!
 ```makefile
 # Define variables at the top
 DATA_DIR = data
-SCRIPTS = scripts  
+SCRIPTS = scripts
 RESULTS = results
 FIGURES = figures
 
-# Use variables in rules  
+# Use variables in rules
 $(DATA_DIR)/clean_data.csv: $(DATA_DIR)/raw_data.csv $(SCRIPTS)/clean.R
 	Rscript $(SCRIPTS)/clean.R
 
@@ -599,7 +599,7 @@ results/table1.xlsx: results/table1.csv
 results/table2.xlsx: results/table2.csv
 	python convert.py results/table2.csv results/table2.xlsx
 
-results/table3.xlsx: results/table3.csv  
+results/table3.xlsx: results/table3.csv
 	python convert.py results/table3.csv results/table3.xlsx
 ```
 
@@ -628,7 +628,7 @@ This one rule handles ALL csv → xlsx conversions!
 **Breaking it down:**
 
 - `%` = wildcard matching any string
-- `%.xlsx` = target pattern (e.g., `table1.xlsx`, `table2.xlsx`)  
+- `%.xlsx` = target pattern (e.g., `table1.xlsx`, `table2.xlsx`)
 - `%.csv` = dependency pattern (e.g., `table1.csv`, `table2.csv`)
 
 . . .
@@ -655,7 +655,7 @@ This one rule handles ALL csv → xlsx conversions!
 
 # Variables
 DATA = data
-RESULTS = results  
+RESULTS = results
 FIGURES = figures
 
 # Default target
@@ -879,7 +879,7 @@ You don't need to be an expert to benefit from Make
 
 . . .
 
-**Key message:**  
+**Key message:**
 Make = Your research pipeline's documentation + automation
 
 . . .

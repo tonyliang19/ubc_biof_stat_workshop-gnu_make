@@ -1302,7 +1302,7 @@ UBC BIOF Statistics Workshop
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Download data</span></span>
 <span id="cb7-2"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> download_data.R</span>
 <span id="cb7-3"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Clean the data  </span></span>
+<span id="cb7-4"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Clean the data</span></span>
 <span id="cb7-5"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> clean_data.R</span>
 <span id="cb7-6"><a href aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Run analysis</span></span>
@@ -1321,10 +1321,7 @@ UBC BIOF Statistics Workshop
 <p><strong>Question: Which scripts need to be re-run?</strong></p>
 </div>
 <div class="fragment">
-<p>A. Just <code>analyze.R</code><br>
-B. <code>analyze.R</code> and <code>make_figures.R</code><br>
-C. All four scripts<br>
-D. Not sure… better run them all!</p>
+<p>A. Just <code>analyze.R</code> B. <code>analyze.R</code> and <code>make_figures.R</code> C. All four scripts D. Not sure… better run them all!</p>
 </div>
 </section>
 <section id="the-problem-dependency-tracking" class="slide level2 center">
@@ -1337,9 +1334,7 @@ D. Not sure… better run them all!</p>
 </ol>
 <div class="fragment">
 <p><strong>But how do you remember this?</strong></p>
-<p>❌ Keep dependencies in your head (error-prone!)<br>
-❌ Re-run everything every time (slow!)<br>
-❌ Write them down somewhere (tedious!)</p>
+<p>❌ Keep dependencies in your head (error-prone!) ❌ Re-run everything every time (slow!) ❌ Write them down somewhere (tedious!)</p>
 </div>
 </section>
 <section id="the-problem-gets-worse" class="slide level2 center">
@@ -1374,8 +1369,7 @@ D. Not sure… better run them all!</p>
 <p>Originally created for compiling software, but perfect for data pipelines!</p>
 </div>
 <div class="fragment">
-<p><strong>Think of Make as:</strong><br>
-A smart assistant that remembers which scripts depend on which files</p>
+<p><strong>Think of Make as:</strong> A smart assistant that remembers which scripts depend on which files</p>
 </div>
 </section>
 <section id="why-make-for-data-analysis" class="slide level2 center">
@@ -1384,7 +1378,7 @@ A smart assistant that remembers which scripts depend on which files</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb8-2"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># run_all.sh - runs EVERYTHING every time</span></span>
 <span id="cb8-3"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> download.R   <span class="co"># 5 minutes</span></span>
-<span id="cb8-4"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> clean.R      <span class="co"># 10 minutes  </span></span>
+<span id="cb8-4"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> clean.R      <span class="co"># 10 minutes</span></span>
 <span id="cb8-5"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> analyze.R    <span class="co"># 30 minutes</span></span>
 <span id="cb8-6"><a href aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> plot.R       <span class="co"># 2 minutes</span></span>
 <span id="cb8-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Total: 47 minutes every run!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1410,8 +1404,7 @@ A smart assistant that remembers which scripts depend on which files</p>
 </ul>
 </div>
 <div class="fragment">
-<p>If you change <code>raw_data.csv</code>, Make knows to rebuild: - <code>clean_data.csv</code> (directly depends on raw data) - <code>results.txt</code> (depends on clean data)<br>
-- <code>plot.png</code> (depends on results)</p>
+<p>If you change <code>raw_data.csv</code>, Make knows to rebuild: - <code>clean_data.csv</code> (directly depends on raw data) - <code>results.txt</code> (depends on clean data) - <code>plot.png</code> (depends on results)</p>
 </div>
 <div class="fragment">
 <p><strong>This is documented, automated, and always correct!</strong></p>
@@ -1479,8 +1472,7 @@ A smart assistant that remembers which scripts depend on which files</p>
 <ol type="1">
 <li>Download iris dataset from web</li>
 <li>Clean and filter the data</li>
-<li>Run statistical analysis<br>
-</li>
+<li>Run statistical analysis</li>
 <li>Generate visualization</li>
 </ol>
 <div class="fragment">
@@ -1557,7 +1549,7 @@ A smart assistant that remembers which scripts depend on which files</p>
 <span id="cb20-4"><a href aria-hidden="true" tabindex="-1"></a>    wget -O data/raw_data.csv \</span>
 <span id="cb20-5"><a href aria-hidden="true" tabindex="-1"></a>      https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv</span>
 <span id="cb20-6"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Clean data  </span></span>
+<span id="cb20-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Clean data</span></span>
 <span id="cb20-8"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">data/clean_data.csv:</span><span class="dt"> data/raw_data.csv scripts/clean.R</span></span>
 <span id="cb20-9"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript scripts/clean.R</span>
 <span id="cb20-10"><a href aria-hidden="true" tabindex="-1"></a></span>
@@ -1597,7 +1589,7 @@ A smart assistant that remembers which scripts depend on which files</p>
 <span id="cb23-4"><a href aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-5"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">clean:</span></span>
 <span id="cb23-6"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>rm -f data/clean_data.csv</span>
-<span id="cb23-7"><a href aria-hidden="true" tabindex="-1"></a>    rm -f results/statistics.txt  </span>
+<span id="cb23-7"><a href aria-hidden="true" tabindex="-1"></a>    rm -f results/statistics.txt</span>
 <span id="cb23-8"><a href aria-hidden="true" tabindex="-1"></a>    rm -f figures/plot.png</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="fragment">
 <p><strong><code>.PHONY</code></strong> tells Make these aren’t real files</p>
@@ -1608,8 +1600,7 @@ A smart assistant that remembers which scripts depend on which files</p>
 <span id="cb24-2"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> clean  <span class="co"># Remove generated files, start fresh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
-<p><strong>Why <code>.PHONY</code>?</strong><br>
-Without it, if a file named “clean” exists, <code>make clean</code> won’t run!</p>
+<p><strong>Why <code>.PHONY</code>?</strong> Without it, if a file named “clean” exists, <code>make clean</code> won’t run!</p>
 </div>
 </section>
 <section id="making-makefiles-readable-with-variables" class="slide level2 center">
@@ -1617,11 +1608,11 @@ Without it, if a file named “clean” exists, <code>make clean</code> won’t 
 <p><strong>Instead of repeating paths:</strong></p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb25-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Define variables at the top</span></span>
 <span id="cb25-2"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">DATA_DIR</span> <span class="ch">=</span><span class="st"> data</span></span>
-<span id="cb25-3"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">SCRIPTS</span> <span class="ch">=</span><span class="st"> scripts  </span></span>
+<span id="cb25-3"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">SCRIPTS</span> <span class="ch">=</span><span class="st"> scripts</span></span>
 <span id="cb25-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">RESULTS</span> <span class="ch">=</span><span class="st"> results</span></span>
 <span id="cb25-5"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">FIGURES</span> <span class="ch">=</span><span class="st"> figures</span></span>
 <span id="cb25-6"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Use variables in rules  </span></span>
+<span id="cb25-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Use variables in rules</span></span>
 <span id="cb25-8"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">$(DATA_DIR)/clean_data.csv:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">DATA_DIR</span><span class="ch">)</span><span class="dt">/raw_data.csv </span><span class="ch">$(</span><span class="dt">SCRIPTS</span><span class="ch">)</span><span class="dt">/clean.R</span></span>
 <span id="cb25-9"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>Rscript <span class="ch">$(</span><span class="dt">SCRIPTS</span><span class="ch">)</span>/clean.R</span>
 <span id="cb25-10"><a href aria-hidden="true" tabindex="-1"></a></span>
@@ -1642,7 +1633,7 @@ Without it, if a file named “clean” exists, <code>make clean</code> won’t 
 <span id="cb26-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">results/table2.xlsx:</span><span class="dt"> results/table2.csv</span></span>
 <span id="cb26-5"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>python convert.py results/table2.csv results/table2.xlsx</span>
 <span id="cb26-6"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-7"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">results/table3.xlsx:</span><span class="dt"> results/table3.csv  </span></span>
+<span id="cb26-7"><a href aria-hidden="true" tabindex="-1"></a><span class="dv">results/table3.xlsx:</span><span class="dt"> results/table3.csv</span></span>
 <span id="cb26-8"><a href aria-hidden="true" tabindex="-1"></a><span class="er">    </span>python convert.py results/table3.csv results/table3.xlsx</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="fragment">
 <p><strong>With pattern rules (elegant!):</strong></p>
@@ -1659,8 +1650,7 @@ Without it, if a file named “clean” exists, <code>make clean</code> won’t 
 <p><strong>Breaking it down:</strong></p>
 <ul>
 <li><code>%</code> = wildcard matching any string</li>
-<li><code>%.xlsx</code> = target pattern (e.g., <code>table1.xlsx</code>, <code>table2.xlsx</code>)<br>
-</li>
+<li><code>%.xlsx</code> = target pattern (e.g., <code>table1.xlsx</code>, <code>table2.xlsx</code>)</li>
 <li><code>%.csv</code> = dependency pattern (e.g., <code>table1.csv</code>, <code>table2.csv</code>)</li>
 </ul>
 </div>
@@ -1682,7 +1672,7 @@ Without it, if a file named “clean” exists, <code>make clean</code> won’t 
 <span id="cb29-2"><a href aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-3"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Variables</span></span>
 <span id="cb29-4"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">DATA</span> <span class="ch">=</span><span class="st"> data</span></span>
-<span id="cb29-5"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">RESULTS</span> <span class="ch">=</span><span class="st"> results  </span></span>
+<span id="cb29-5"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">RESULTS</span> <span class="ch">=</span><span class="st"> results</span></span>
 <span id="cb29-6"><a href aria-hidden="true" tabindex="-1"></a><span class="dt">FIGURES</span> <span class="ch">=</span><span class="st"> figures</span></span>
 <span id="cb29-7"><a href aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-8"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Default target</span></span>
@@ -1853,8 +1843,7 @@ Without it, if a file named “clean” exists, <code>make clean</code> won’t 
 <h2>Questions? 🤔</h2>
 <p><strong>Thank you for attending!</strong></p>
 <div class="fragment">
-<p><strong>Key message:</strong><br>
-Make = Your research pipeline’s documentation + automation</p>
+<p><strong>Key message:</strong> Make = Your research pipeline’s documentation + automation</p>
 </div>
 <div class="fragment">
 <p>Think of your Makefile as a <strong>lab notebook for computational work</strong></p>
