@@ -41,15 +41,15 @@ You need [Quarto](https://quarto.org/) installed on your system.
 
 2. Render the slides:
    ```bash
-   quarto render slides.qmd
+   quarto render index.qmd
    ```
 
 3. Open the generated HTML file:
    ```bash
-   # The slides will be generated as slides.html
-   open slides.html  # macOS
-   xdg-open slides.html  # Linux
-   start slides.html  # Windows
+   # The slides will be generated as index.html
+   open index.html  # macOS
+   xdg-open index.html  # Linux
+   start index.html  # Windows
    ```
 
 ### Preview Mode
@@ -57,22 +57,30 @@ You need [Quarto](https://quarto.org/) installed on your system.
 For live preview while editing:
 
 ```bash
-quarto preview slides.qmd
+quarto preview index.qmd
 ```
 
 This will open a browser and auto-reload when you save changes.
 
 ## Slide Contents
 
-1. **Introduction** - Workshop goals and audience
-2. **The Problem** - Issues with manual workflows
-3. **What is GNU Make?** - Core concepts and benefits
-4. **Make vs Shell Scripts** - Direct comparison
-5. **Basic Syntax** - Targets, dependencies, commands
-6. **Real Example** - Complete data analysis pipeline
-7. **Advanced Features** - Variables, pattern rules, parallel execution
-8. **Best Practices** - Tips for using Make effectively
-9. **Resources** - Where to learn more
+The slides follow a narrative arc that builds from problem to solution:
+
+1. **Introduction** - Workshop goals and target audience
+2. **The Problem** - Manual workflow pain points with interactive quiz
+3. **What is GNU Make?** - Core concepts and why it matters
+4. **Why Make for Data Analysis** - Direct comparison with shell scripts
+5. **Basic Syntax** - Targets, dependencies, commands explained step-by-step
+6. **How Make Decides** - The "magic" of timestamp-based dependency tracking
+7. **Building a Pipeline** - Incremental 4-step data analysis example
+8. **Phony Targets** - Special non-file targets
+9. **Variables** - Making Makefiles maintainable
+10. **Pattern Rules** - DRY principle with wildcards
+11. **Best Practices & Common Pitfalls** - Tips for success
+12. **Debugging** - Tools to troubleshoot Makefiles
+13. **Resources** - References including STAT 545 and Software Carpentry
+
+**Note:** Content is intentionally limited to pattern rules level (no advanced features) to keep the workshop accessible and within the 30-45 minute timeframe.
 
 ## Workshop Structure (30-45 minutes)
 
@@ -103,10 +111,18 @@ This will open a browser and auto-reload when you save changes.
 
 The slides are written in Quarto markdown (`.qmd`). You can easily customize:
 
-- Edit `slides.qmd` to modify content
-- Change theme in the YAML header (line 6: `theme: dark`)
+- Edit `index.qmd` to modify content
+- Change theme in the YAML header (`theme: simple`)
 - Add your own examples
 - Adjust slide transitions and navigation
+
+## Acknowledgments
+
+This workshop is based on materials from:
+
+- [STAT 545 Automating Data-analysis Pipelines](https://github.com/STAT545-UBC/STAT545-UBC-original-website/blob/master/automation01_slides/slides.md) by Shaun Jackman & Jenny Bryan
+- [Software Carpentry: Automation and Make](https://swcarpentry.github.io/make-novice/)
+- [Minimal Make](https://kbroman.org/minimal_make/) by Karl Broman
 
 ## License
 
