@@ -4,6 +4,11 @@ library(broom)
 library(ggplot2)
 library(patchwork)
 
+# Download data from internet
+dest <- "data/iris.csv"
+url <- "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
+download.file(url, dest, quiet = FALSE)
+
 # Read raw data
 iris_clean <- read_csv("data/iris.csv", show_col_types = FALSE)
 
