@@ -7,30 +7,22 @@ format:
     theme: simple
     slide-number: true
     transition: slide
-    navigation-mode: linear
+#    navigation-mode: linear
     embed-resources: true
     width: 1280
     height: 720
     controls: true
     progress: true
-    center: true
     code-line-numbers: false
     output-file: index.html # If naming other files , gh complains
+engine: knitr
 ---
 
-## Welcome! 👋
+## Objective
 
 **Today's Goal:**
 
 Learn how to use GNU Make to automate your research workflows
-
-. . .
-
-**Who is this for?**
-
-- Graduate students doing data analysis
-- Researchers who want reproducible pipelines
-- Anyone tired of manually running scripts in order
 
 . . .
 
@@ -40,90 +32,17 @@ Learn how to use GNU Make to automate your research workflows
 - Basic Make syntax
 - Real data analysis example
 
----
 
-## Installing GNU Make on Windows 🪟
-
-**Option 1: Using Chocolatey (Recommended)**
-
-1. **Install Chocolatey** (if not already installed):
-   - Right-click Start menu → "Windows PowerShell (Admin)"
-   - Visit: <https://chocolatey.org/install>
-   - Copy and run the installation command from the website
-
-2. **Install GNU Make:**
-   ```powershell
-   choco install make
-   ```
-
-3. **Verify installation:**
-   ```bash
-   make --version
-   # Should show: GNU Make 4.x
-   ```
-
-. . .
-
-**Option 2: Using Git for Windows (Built-in)**
-
-- Download and install **Git for Windows**: <https://gitforwindows.org/>
-- Make is included! Access via **Git Bash** terminal
-- Look for "Git Bash" in your Start menu
-
-. . .
-
-**Troubleshooting:**
-- If `make` command not found → Restart terminal/PowerShell
-- Use Git Bash instead of Command Prompt for Option 2
-
----
-
-## Installing GNU Make on macOS 🍎
-
-**Option 1: Using Homebrew (Recommended)**
-
-1. **Install Homebrew** (if not already installed):
-   - Open **Terminal** (Applications → Utilities → Terminal)
-   - Visit: <https://brew.sh/>
-   - Copy and run the installation command:
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-
-2. **Install GNU Make:**
-   ```bash
-   brew install make
-   ```
-
-3. **Verify installation:**
-   ```bash
-   make --version
-   # Should show: GNU Make 4.x
-   ```
-
-. . .
-
-**Option 2: Xcode Command Line Tools (Built-in)**
-
-GNU Make comes with Xcode Command Line Tools:
-```bash
-xcode-select --install
-```
-Click "Install" in the popup window
-
-. . .
-
-**Troubleshooting:**
-- If `make --version` shows older version → Use `brew install make`
-- Homebrew installs as `gmake` on some systems → Create alias or use `gmake`
-
----
 
 ## The Problem: Manual Workflows 😓
 
-**Typical research workflow:**
+Typical research workflow:
 
-```bash
+```{bash}
+#| echo: true
+#| eval: false
+#| code-line-numbers: false
+
 # Download data
 Rscript download_data.R
 
@@ -145,7 +64,6 @@ Rscript make_figures.R
 - Did I re-run everything after updating data?
 - What if one step fails halfway through?
 
----
 
 ## The Problem Continued
 
@@ -167,24 +85,99 @@ Rscript make_figures.R
 
 ✅ **Solution: GNU Make automatically tracks dependencies!**
 
----
 
 ## What is GNU Make? 🔧
 
-A build automation tool that:
+["GNU is not unix"]{.primary}, a build automation tool that:
 
 . . .
 
-1. **Tracks dependencies** between files
+1. Tracks dependencies between files
 2. **Runs only what's needed** when files change
-3. **Documents your workflow** in one place
+3. Documents your workflow in one place
 4. **Ensures reproducibility**
 
 . . .
 
 Originally designed for compiling software, but perfect for data analysis!
 
----
+```{notes}
+- Make is language agnostic, so it can run any program compatible with a Unix shel
+
+- Make is pretty steep. It’s frustrating to learn, and it can be tricky to use even after you’ve learned the basics. 
+
+- Make has no graphical user interface, so you need to have at least a basic familiarity with the Unix command line. You also have to know how to run scripts non-interactively. 
+```
+
+## Basic Makefile Syntax
+
+The tool itself is a binary called `make` thats runs with `Makefile`.
+
+```makefile
+target: dependencies
+	command
+```
+
+. . .
+
+**Example:**
+
+```{makefile}
+#| echo: true
+#| eval: false
+#| code-line-numbers: true
+clean_data.csv: raw_data.csv
+	Rscript clean_data.R
+```
+
+. . .
+
+- `clean_data.csv` = **target** (what you want to create)
+- `raw_data.csv` = **dependency** (what you need)
+- `Rscript clean_data.R` = **command** (how to make it)
+
+**⚠️ Important: Commands MUST start with a TAB, not spaces!**
+
+
+
+## How Make Works
+
+When you run `make clean_data.csv`:
+
+. . .
+
+1. Check if `clean_data.csv` exists
+2. Check if `raw_data.csv` is newer than `clean_data.csv`
+3. If yes → run the command
+4. If no → skip (already up-to-date!)
+
+. . .
+
+**This is the magic! 🎩✨**
+
+Make only rebuilds what's necessary based on file timestamps.
+
+
+## Make vs Shell Scripts
+
+**Makefile approach:**
+
+```makefile
+results.csv: raw_data.csv clean.R
+	Rscript clean.R
+
+plots/figure1.png: results.csv plot.R
+	Rscript plot.R
+```
+
+**Benefits:**
+
+- Only re-runs when inputs change
+- Automatic dependency resolution
+- Self-documenting workflow
+- Can run independent tasks in parallel
+
+
 
 ## Make vs Shell Scripts
 
@@ -206,73 +199,9 @@ Rscript plot.R
 - Manual ordering
 - No parallelization
 
----
 
-## Make vs Shell Scripts
 
-**Makefile approach:**
 
-```makefile
-results.csv: raw_data.csv clean.R
-	Rscript clean.R
-
-plots/figure1.png: results.csv plot.R
-	Rscript plot.R
-```
-
-**Benefits:**
-
-- Only re-runs when inputs change
-- Automatic dependency resolution
-- Self-documenting workflow
-- Can run independent tasks in parallel
-
----
-
-## Basic Makefile Syntax
-
-```makefile
-target: dependencies
-	command
-```
-
-. . .
-
-**Example:**
-
-```makefile
-clean_data.csv: raw_data.csv
-	Rscript clean_data.R
-```
-
-. . .
-
-- `clean_data.csv` = **target** (what you want to create)
-- `raw_data.csv` = **dependency** (what you need)
-- `Rscript clean_data.R` = **command** (how to make it)
-
-**⚠️ Important: Commands MUST start with a TAB, not spaces!**
-
----
-
-## How Make Works
-
-When you run `make clean_data.csv`:
-
-. . .
-
-1. Check if `clean_data.csv` exists
-2. Check if `raw_data.csv` is newer than `clean_data.csv`
-3. If yes → run the command
-4. If no → skip (already up-to-date!)
-
-. . .
-
-**This is the magic! 🎩✨**
-
-Make only rebuilds what's necessary based on file timestamps.
-
----
 
 ## Real Example: Data Analysis Pipeline
 
@@ -452,6 +381,16 @@ make clean  # Remove generated files
 ```
 
 ---
+
+## Sometimes convenience target
+
+Sometimes, you just want to have everything to send out to your collaborators
+
+```makefile
+collaboration-packet.zip: data-wrangling.R raw-data.csv paper.Rmd comments.txt
+    Rscript data-wrangling.R  clean-data.csv
+    gzip collaboration-packet.zip clean-data.csv paper.Rmd comments.txt
+```
 
 ## Variables for Cleaner Makefiles
 
@@ -773,3 +712,77 @@ Remember: Reproducible research benefits everyone!
 . . .
 
 Start using Make in your next project! 🚀
+
+
+## Optional: Installing GNU Make on Windows 
+
+**Option 1: Using Chocolatey (Recommended)**
+
+1. **Install Chocolatey** (if not already installed):
+   - Right-click Start menu → "Windows PowerShell (Admin)"
+   - Visit: <https://chocolatey.org/install>
+   - Copy and run the installation command from the website
+
+2. **Install GNU Make:**
+   ```powershell
+   choco install make
+   ```
+
+3. **Verify installation:**
+   ```bash
+   make --version
+   # Should show: GNU Make 4.x
+   ```
+
+. . .
+
+**Option 2: Using Git for Windows (Built-in)**
+
+- Download and install **Git for Windows**: <https://gitforwindows.org/>
+- Make is included! Access via **Git Bash** terminal
+- Look for "Git Bash" in your Start menu
+
+. . .
+
+**Troubleshooting:**
+- If `make` command not found → Restart terminal/PowerShell
+- Use Git Bash instead of Command Prompt for Option 2
+
+## Optional: Installing GNU Make on macOS
+
+**Option 1: Using Homebrew (Recommended)**
+
+1. **Install Homebrew** (if not already installed):
+   - Open **Terminal** (Applications → Utilities → Terminal)
+   - Visit: <https://brew.sh/>
+   - Copy and run the installation command:
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+
+2. **Install GNU Make:**
+   ```bash
+   brew install make
+   ```
+
+3. **Verify installation:**
+   ```bash
+   make --version
+   # Should show: GNU Make 4.x
+   ```
+
+. . .
+
+**Option 2: Xcode Command Line Tools (Built-in)**
+
+GNU Make comes with Xcode Command Line Tools:
+```bash
+xcode-select --install
+```
+Click "Install" in the popup window
+
+. . .
+
+**Troubleshooting:**
+- If `make --version` shows older version → Use `brew install make`
+- Homebrew installs as `gmake` on some systems → Create alias or use `gmake`
